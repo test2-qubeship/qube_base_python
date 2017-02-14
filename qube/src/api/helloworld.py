@@ -4,10 +4,12 @@ Add docstring here
 """
 from flask_restful_swagger_2 import Resource, swagger
 from flask_restful import reqparse
-from qube.src.api.swagger_models.parameters \
-    import header_ex, path_ex, query_ex, body_ex
-from qube.src.api.swagger_models.response_messages \
-    import response_msgs, ErrorModel
+from qube.src.api.swagger_models.parameters import (
+    header_ex, path_ex, query_ex, body_ex,
+    body_post_ex, body_put_ex)
+from qube.src.api.swagger_models.response_messages import (
+    response_msgs, post_response_msgs, get_response_msgs,
+    put_response_msgs, del_response_msgs, ErrorModel)
 from qube.src.commons.log import Log as LOG
 from flask import  request
 from qube.src.models.hello import Hello
@@ -17,12 +19,12 @@ import json
 from mongoalchemy.exceptions import DocumentException, MissingValueException, ExtraValueException, FieldNotRetrieved, BadFieldSpecification
 
 
-
 hello_item_get_params = [header_ex, path_ex, query_ex]
-hello_item_put_params = [header_ex, path_ex, body_ex]
-hello_post_params = [header_ex, body_ex]
+hello_item_put_params = [header_ex, path_ex, body_put_ex]
 hello_item_delete_params = [header_ex, path_ex]
 hello_get_params = [header_ex]
+hello_post_params = [header_ex, body_post_ex]
+
 
 class HelloItemResource(Resource):
     @swagger.doc(
@@ -30,14 +32,11 @@ class HelloItemResource(Resource):
             'tags': ['Hello World'],
             'description': 'hello world get operation',
             'parameters': hello_item_get_params,
-            'responses': response_msgs
+            'responses': get_response_msgs
         }
     )
-    
-  
     def get(self, id):
-        """
-        gets an hello item
+        """gets an hello item that omar has changed
         """
         LOG.debug("hello world")
 
@@ -54,7 +53,7 @@ class HelloItemResource(Resource):
             'tags': ['Hello World'],
             'description': 'hello world put operation',
             'parameters': hello_item_put_params,
-            'responses': response_msgs
+            'responses': put_response_msgs
         }
     )
     def put(self, id):
@@ -82,7 +81,7 @@ class HelloItemResource(Resource):
             'tags': ['Hello World'],
             'description': 'hello world delete operation',
             'parameters': hello_item_delete_params,
-            'responses': response_msgs
+            'responses': del_response_msgs
         }
     )    
     def delete(self, id):
@@ -111,7 +110,7 @@ class HelloWorld(Resource):
             'tags': ['Hello World'],
             'description': 'hello world get operation',
             'parameters': hello_get_params,
-            'responses': response_msgs
+            'responses': get_response_msgs
         }
     )    
     def get(self):
@@ -129,16 +128,15 @@ class HelloWorld(Resource):
         #normalize the name for 'id'
         return hello_list
     
-        
+
     @swagger.doc(
         {
             'tags': ['Hello World'],
-            'description': 'hello world create toolchain operation',
+            'description': 'hello world create operation',
             'parameters' : hello_post_params,
-            'responses': response_msgs
+            'responses': post_response_msgs
         }
     )
-
     def post(self):
         """
         Adds a hello item.

@@ -11,3 +11,37 @@ class HelloModel(Schema):
         }
     }
     required = ['name']
+
+
+class HelloModelPost(Schema):
+    type = 'object'
+    properties = {
+        'name': {
+            'type': 'string'
+        }
+    }
+    required = ['name']
+
+
+class HelloModelPut(Schema):
+    type = 'object'
+    properties = {
+        'name': {
+            'type': 'string'
+        }
+    }
+    required = ['name']
+
+
+class HelloErrorModel(Schema):
+    type = 'object'
+    properties = {
+        'error_code': {
+            'type': 'string'
+        },
+        'error_message': {
+            'type': 'string'
+        }        
+    }
+    required = ['name']
+    
