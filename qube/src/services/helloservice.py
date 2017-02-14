@@ -9,9 +9,13 @@ class HelloService:
         self.auth_context = context
 
     def find_hello_by_id(self, entity_id):
-        data = Hello.query.get(entity_id)  # filter with id not working, unable to proceed with tenant filter
+        # filter with id not working,
+        # unable to proceed with tenant filter
+        data = Hello.query.get(entity_id)
         if data is None:
-            raise HelloServiceError('hello ' + entity_id + ' not found', ErrorCodes.NOT_FOUND)
+            raise HelloServiceError('hello ' +
+                                    entity_id + ' not found',
+                                    ErrorCodes.NOT_FOUND)
 
         hello_data = data.wrap()
         clean_nonserializable_attributes(hello_data)
@@ -19,7 +23,8 @@ class HelloService:
 
     def get_all_hellos(self):
         hello_list = []
-        data = Hello.query.filter(Hello.tenantId == self.auth_context.tenant_id)
+        data = Hello.query.filter(Hello.tenantId ==
+                                  self.auth_context.tenant_id)
         for hello_data_item in data:
             hello_data = hello_data_item.wrap()
             clean_nonserializable_attributes(hello_data)
@@ -47,7 +52,8 @@ class HelloService:
 
         hello_record = Hello.query.get(entity_id)  # Hello is a mongo class
         if hello_record is None:
-            raise HelloServiceError('hello ' + entity_id + ' not found', ErrorCodes.NOT_FOUND)
+            raise HelloServiceError('hello ' + entity_id +
+                                    ' not found', ErrorCodes.NOT_FOUND)
 
         for key in hello_model:
             hello_record.__setattr__(key, hello_model[key])
@@ -61,5 +67,6 @@ class HelloService:
     def delete_hello(self, entity_id):
         hello = Hello.query.get(entity_id)
         if hello is None:
-            raise HelloServiceError('hello ' + entity_id + ' not found', ErrorCodes.NOT_FOUND)
+            raise HelloServiceError('hello ' + entity_id +
+                                    ' not found', ErrorCodes.NOT_FOUND)
         hello.remove()
