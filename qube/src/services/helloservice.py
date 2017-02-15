@@ -1,7 +1,8 @@
-from qube.src.models.hello import Hello
+import time
+
 from qube.src.commons.error import ErrorCodes, HelloServiceError
 from qube.src.commons.utils import clean_nonserializable_attributes
-import time
+from qube.src.models.hello import Hello
 
 
 class HelloService:
