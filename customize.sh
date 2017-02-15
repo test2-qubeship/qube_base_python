@@ -59,7 +59,7 @@ for file in `find . -type f  | grep -v customize.sh| grep -v .whl | grep -v .git
   rm -rf $file.*bak*
 done
 
-for file in `find . -type f  | grep -v customize.sh| grep -v .whl | grep -v .git| xargs grep -Ril hello`; do
+for file in `find . -type f  | grep -v customize.sh| grep -v .whl | grep -v .git| xargs grep -Ril QUBE_SERVICE`; do
   upper_service=`echo $service| tr '[:lower:]' '[:upper:]'`
   echo "renaming QUBE_SERVICE to $upper_service in $file"
   sed -i".bak" "s/QUBE_SERVICE/$upper_service/g" $file;
