@@ -40,7 +40,7 @@ for file in `find . -type f  | grep -v customize.sh| grep -v .whl | xargs grep -
 done
 
 for file in `find . -type f | grep hello`; do
-    echo "renaming $f"
+    echo "renaming $file"
     newfile="${file/hello/${1,,}}"
     mv $file $newfile
 done
