@@ -14,11 +14,15 @@ from qube.src.models.hello import Hello
 from qube.src.api.swagger_models.hello import HelloModel
 from qube.src.commons.utils import clean_nonserializable_attributes
 import json
+from mongoalchemy.exceptions import DocumentException, MissingValueException, ExtraValueException, FieldNotRetrieved, BadFieldSpecification
+
 
 
 hello_item_get_params = [header_ex, path_ex, query_ex]
 hello_item_put_params = [header_ex, path_ex, body_ex]
 hello_post_params = [header_ex, path_ex, body_ex]
+hello_item_delete_params = [header_ex, path_ex]
+hello_get_params = [header_ex]
 
 class HelloItemResource(Resource):
     @swagger.doc(
@@ -29,11 +33,19 @@ class HelloItemResource(Resource):
             'responses': response_msgs
         }
     )
-    def get(self, id=None):
+    
+  
+    def get(self, id):
+        """
+        gets an hello item
+        """
         LOG.debug("hello world")
 
         parser = reqparse.RequestParser()
         data = Hello.query.get(id)
+        if data is None:
+            return 'not found', 404
+
         hello_data = data.wrap()
         clean_nonserializable_attributes(hello_data)
         return HelloModel(**hello_data)
@@ -47,9 +59,14 @@ class HelloItemResource(Resource):
         }
     )
     def put(self, id):
+        """
+        updates an hello item
+        """
         try:
             hello_model = HelloModel(**request.get_json())
             hello_record = Hello.query.get(id)
+            if hello_record is None:
+                return 'not found', 404
             merged_hello_record = hello_record.wrap()
             merged_hello_record.update(hello_model)
             updated_hello_record = Hello.unwrap(merged_hello_record)
@@ -61,11 +78,63 @@ class HelloItemResource(Resource):
         except Exception as ex:
             LOG.error(ex)
             return ErrorModel(**{'message': ex.args[0]}), 500
+    
+    @swagger.doc(
+        {
+            'tags': ['Hello World'],
+            'description': 'hello world delete operation',
+            'parameters': hello_item_delete_params,
+            'responses': response_msgs
+        }
+    )    
+    def delete(self, id):
+        """
+        Delete hello item
+        """
+        try:
+            #data = Hello(**request.get_json())
+            data = request.get_json()
+            #hello_data = Hello(data)
+            hello = Hello.query.get(id)
+            if hello is None:
+                return 'not found', 404
+            hello.remove()
+            return '', 204
+        except ValueError as e:
+            LOG.error(e)
+            return ErrorModel(**{'message': e.args[0]}), 400
+        except Exception as ex:
+            LOG.error(ex)
+            return ErrorModel(**{'message': ex.args[0]}), 500
 
-
+     
+        return 'unexpected error', 500
 
 class HelloWorld(Resource):
-
+    @swagger.doc(
+        {
+            'tags': ['Hello World'],
+            'description': 'hello world get operation',
+            'parameters': hello_get_params,
+            'responses': response_msgs
+        }
+    )    
+    def get(self):
+        """
+        gets all hello items
+        """
+        LOG.debug("Serving  Get all request")
+        hello_list = []
+        data = Hello.query.all()
+        #hello_data = data.wrap()
+        for hello_data_item in data:
+            hello_data = hello_data_item.wrap()
+            clean_nonserializable_attributes(hello_data)
+            hello_list.append(hello_data)
+        #normalize the name for 'id'
+        return hello_list
+    
+        
     @swagger.doc(
         {
             'tags': ['Hello World'],
@@ -90,6 +159,10 @@ class HelloWorld(Resource):
         except ValueError as e:
             LOG.error(e)
             return ErrorModel(**{'message': e.args[0]}), 400
+        except ExtraValueException as e:
+            LOG.error(ex)
+            return ErrorModel(**{'message': "{} is not valid input".format(e.args[0]) }), 400
         except Exception as ex:
             LOG.error(ex)
             return ErrorModel(**{'message': ex.args[0]}), 500
+

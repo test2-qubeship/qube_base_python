@@ -7,7 +7,7 @@ header_ex = {
     "description": "Custom header that is expected as part of the request",
     "name": "Authorization",
     "in": "header",
-    "required": True
+    "required": False
 }
 
 path_ex = {
