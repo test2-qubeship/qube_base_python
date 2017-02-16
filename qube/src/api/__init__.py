@@ -4,9 +4,11 @@ Add docstring here
 """
 
 from flask import Flask
-from flask.ext.mongoalchemy import MongoAlchemy
+from flask_mongoalchemy import MongoAlchemy
 import os
 from flask_cors import CORS
+
+
 
 app = Flask(__name__)
 CORS(app)

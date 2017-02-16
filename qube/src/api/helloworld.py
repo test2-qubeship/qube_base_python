@@ -159,7 +159,7 @@ class HelloWorld(Resource):
             LOG.error(e)
             return ErrorModel(**{'message': e.args[0]}), 400
         except ExtraValueException as e:
-            LOG.error(ex)
+            LOG.error(e)
             return ErrorModel(**{'message': "{} is not valid input".format(e.args[0]) }), 400
         except Exception as ex:
             LOG.error(ex)
