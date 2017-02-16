@@ -9,12 +9,14 @@ from qube.src.api.swagger_models.parameters \
 from qube.src.api.swagger_models.response_messages \
     import response_msgs
 from qube.src.commons.log import Log as LOG
+from flask import  request
+from qube.src.models.hello import Hello
 
 
 params = [header_ex, path_ex, query_ex]
 
 
-class HelloWorld(Resource):
+class HelloItemResource(Resource):
     @swagger.doc(
         {
             'tags': ['Hello World'],
@@ -23,13 +25,43 @@ class HelloWorld(Resource):
             'responses': response_msgs
         }
     )
-    def get(self, name=None):
+    def get(self, id=None):
         LOG.debug("hello world")
 
         parser = reqparse.RequestParser()
-        parser.add_argument('sth')
+        #parser.add_argument('id')
         args = parser.parse_args()
-        name = name if name is not None else 'test'
-        sth = args['sth'] if args['sth'] is not None else 'hello world'
+        print(args, id)
 
-        return {name: sth}
+class HelloWorld(Resource):
+
+    @swagger.doc(
+        {
+            'tags': ['Hello World'],
+            'description': 'hello world create toolchain operation',
+            'responses': response_msgs
+        }
+    )
+
+    def post(self):
+        """
+        Adds a user.
+        """
+        # Validate request body with schema model
+        hello_data = None
+
+
+        try:
+            #data = Hello(**request.get_json())
+            data = request.get_json()
+            #hello_data = Hello(data)
+            hello_data = Hello(name=data['name'])
+            hello_data.save()
+
+        except ValueError as e:
+            return ErrorModel(**{'message': e.args[0]}), 400
+
+        if hello_data:
+            return '', 201, {'Location': request.path + '/' + str(hello_data.mongo_id)}
+        else:
+            return 'unexpected error', 500

@@ -12,7 +12,7 @@ header_ex = {
 path_ex = {
     "type": "string",
     "description": "This is the part of the URL",
-    "name": "name",
+    "name": "id",
     "in": "path",
     "required": True
 }

@@ -5,3 +5,4 @@ flask-restful>=0.3.5
 flask-restful-swagger-2>=0.31
 mock
 nose
+flask-MongoAlchemy==0.3.2
