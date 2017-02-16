@@ -6,3 +6,4 @@ flask-restful-swagger-2>=0.31
 flask-swagger-ui==0.0.2
 mock
 nose
+flask-MongoAlchemy==0.3.2

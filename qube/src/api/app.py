@@ -9,17 +9,16 @@ from flask import Flask
 
 from flask_restful_swagger_2 import Api
 from flask_swagger_ui import get_swaggerui_blueprint
-
 from pkg_resources import resource_filename
-from qube.src.api.helloworld import HelloWorld
+from qube.src.api.helloworld import *
 from qube.src.commons.log import Log as LOG
-
+from qube.src.api import app
 
 logging_config = resource_filename(
     'qube.src.resources', 'logging_config.ini')
 fileConfig(logging_config)
 
-app = Flask(__name__)
+
 API_URL = '/specs' # Our API url (can of course be a local resource)
 
 api = Api(app, api_version='0.1', api_spec_url=API_URL)
@@ -44,6 +43,8 @@ swaggerui_blueprint = get_swaggerui_blueprint(
 # Register blueprint at URL
 # (URL must match the one given to factory function above)
 app.register_blueprint(swaggerui_blueprint, url_prefix=SWAGGER_URL)
+
+api.add_resource(HelloItemResource, '/hello/<string:id>')
 
 
 def main():
