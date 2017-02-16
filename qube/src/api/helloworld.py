@@ -11,6 +11,8 @@ from qube.src.api.swagger_models.response_messages \
 from qube.src.commons.log import Log as LOG
 from flask import  request
 from qube.src.models.hello import Hello
+from mongoalchemy.exceptions import DocumentException, MissingValueException, ExtraValueException, FieldNotRetrieved, BadFieldSpecification
+
 
 
 params = [header_ex, path_ex, query_ex]
@@ -34,20 +36,21 @@ class HelloItemResource(Resource):
         #parser.add_argument('id')
         args = parser.parse_args()
         data = Hello.query.get(id)
+        if data is None:
+            return 'not found', 404
+            
         hello_data = data.wrap()
-
         #normalize the name for 'id'
         if '_id' in hello_data:
             hello_data['id'] = str(hello_data['_id'])
             del hello_data['_id']
 
         return hello_data
-
         
     @swagger.doc(
         {
             'tags': ['Hello World'],
-            'description': 'hello world update toolchain operation',
+            'description': 'hello world update operation',
             'responses': response_msgs
         }
     ) 
@@ -64,6 +67,10 @@ class HelloItemResource(Resource):
             data = request.get_json()
             #hello_data = Hello(data)
             old_hello = Hello.query.get(id)
+            
+            if old_hello is None:
+                return 'not found', 404
+            
             #old_hello.update(data)
             old_hello_dic = old_hello.wrap()
             old_hello_dic.update(data)
@@ -72,7 +79,28 @@ class HelloItemResource(Resource):
             return '', 204, {'Location': request.path + '/' + str(old_hello.mongo_id)}
 
         except e:
-            return ErrorModel(**{'message': e.args[0]}), 400
+            return e.args[0], 400
+
+     
+        return 'unexpected error', 500
+    
+    def delete(self, id):
+        """
+        Delete.
+        """
+        try:
+            #data = Hello(**request.get_json())
+            data = request.get_json()
+            #hello_data = Hello(data)
+            hello = Hello.query.get(id)
+            if hello is None:
+                return 'not found', 404
+            
+            hello.remove()
+            return '', 204
+
+        except e:
+            return e.args[0], 400
 
      
         return 'unexpected error', 500
@@ -104,7 +132,7 @@ class HelloWorld(Resource):
     @swagger.doc(
         {
             'tags': ['Hello World'],
-            'description': 'hello world create toolchain operation',
+            'description': 'hello world create operation',
             'responses': response_msgs
         }
     )
@@ -118,11 +146,12 @@ class HelloWorld(Resource):
 
         try:
             data = request.get_json()
-            hello_data = Hello(name=data['name'])
+            hello_data  = Hello.unwrap(data)
             hello_data.save()
-
+        except ExtraValueException as e:
+             return e.args[0] +" is not valid input", 400
         except ValueError as e:
-            return ErrorModel(**{'message': e.args[0]}), 400
+            return e.args[0], 400
 
         if hello_data:
             return '', 201, {'Location': request.path + '/' + str(hello_data.mongo_id)}
