@@ -31,7 +31,15 @@ class HelloItemResource(Resource):
         parser = reqparse.RequestParser()
         #parser.add_argument('id')
         args = parser.parse_args()
-        print(args, id)
+        data = Hello.query.get(id)
+        hello_data = data.wrap()
+
+        #normalize the name for 'id'
+        if '_id' in hello_data:
+            hello_data['id'] = str(hello_data['_id'])
+            del hello_data['_id']
+
+        return hello_data
 
 class HelloWorld(Resource):
 
@@ -45,16 +53,13 @@ class HelloWorld(Resource):
 
     def post(self):
         """
-        Adds a user.
+        Adds a hello item.
         """
-        # Validate request body with schema model
         hello_data = None
 
 
         try:
-            #data = Hello(**request.get_json())
             data = request.get_json()
-            #hello_data = Hello(data)
             hello_data = Hello(name=data['name'])
             hello_data.save()
 
