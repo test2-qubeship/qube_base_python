@@ -41,7 +41,6 @@ class HelloItemResource(Resource):
         """
         LOG.debug("hello world")
 
-        parser = reqparse.RequestParser()
         data = Hello.query.get(id)
         if data is None:
             return 'not found', 404
@@ -64,7 +63,7 @@ class HelloItemResource(Resource):
         """
         try:
             hello_model = HelloModel(**request.get_json())
-            hello_record = Hello.query.get(id)
+            hello_record = Hello.query.get(id) #Hello is a mongo class
             if hello_record is None:
                 return 'not found', 404
             merged_hello_record = hello_record.wrap()
