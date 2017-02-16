@@ -25,6 +25,8 @@ class HelloItemResource(Resource):
             'responses': response_msgs
         }
     )
+    
+  
     def get(self, id):
         LOG.debug("hello world")
 
@@ -62,10 +64,11 @@ class HelloItemResource(Resource):
             data = request.get_json()
             #hello_data = Hello(data)
             old_hello = Hello.query.get(id)
-            old_hello.update(data)
-#             z.update(y)
-#              z = 
-            old_hello.save()
+            #old_hello.update(data)
+            old_hello_dic = old_hello.wrap()
+            old_hello_dic.update(data)
+            hello = old_hello.unwrap(old_hello_dic)
+            hello.save()
             return '', 204, {'Location': request.path + '/' + str(old_hello.mongo_id)}
 
         except e:
@@ -75,6 +78,24 @@ class HelloItemResource(Resource):
         return 'unexpected error', 500
 
 class HelloWorld(Resource):
+    
+    def get(self):
+        LOG.debug("hello world")
+    
+        parser = reqparse.RequestParser()
+        #parser.add_argument('id')
+        args = parser.parse_args()
+        data = Hello.query.all()
+        hello_data = data.wrap()
+    
+        #normalize the name for 'id'
+        if '_id' in hello_data:
+            hello_data['id'] = str(hello_data['_id'])
+            del hello_data['_id']
+    
+        return hello_data
+    
+        
 
     @swagger.doc(
         {
