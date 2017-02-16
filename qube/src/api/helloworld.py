@@ -80,20 +80,24 @@ class HelloItemResource(Resource):
 class HelloWorld(Resource):
     
     def get(self):
-        LOG.debug("hello world")
-    
+        LOG.debug("Serving  Get all request")
+        hello_list = []
         parser = reqparse.RequestParser()
         #parser.add_argument('id')
         args = parser.parse_args()
         data = Hello.query.all()
-        hello_data = data.wrap()
+        #hello_data = data.wrap()
+        for hello_data_item in data:
+            hello_data = hello_data_item.wrap()
+            if '_id' in hello_data:
+                hello_data['id'] = str(hello_data['_id'])
+                del hello_data['_id']
+                hello_list.append(hello_data)
     
         #normalize the name for 'id'
-        if '_id' in hello_data:
-            hello_data['id'] = str(hello_data['_id'])
-            del hello_data['_id']
+       
     
-        return hello_data
+        return hello_list
     
         
 
