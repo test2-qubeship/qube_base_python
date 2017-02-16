@@ -25,7 +25,7 @@ class HelloItemResource(Resource):
             'responses': response_msgs
         }
     )
-    def get(self, id=None):
+    def get(self, id):
         LOG.debug("hello world")
 
         parser = reqparse.RequestParser()
@@ -40,6 +40,39 @@ class HelloItemResource(Resource):
             del hello_data['_id']
 
         return hello_data
+
+        
+    @swagger.doc(
+        {
+            'tags': ['Hello World'],
+            'description': 'hello world update toolchain operation',
+            'responses': response_msgs
+        }
+    ) 
+    def put(self, id):
+        """
+        Update.
+        """
+        # Validate request body with schema model
+        hello_data = None
+
+
+        try:
+            #data = Hello(**request.get_json())
+            data = request.get_json()
+            #hello_data = Hello(data)
+            old_hello = Hello.query.get(id)
+            old_hello.update(data)
+#             z.update(y)
+#              z = 
+            old_hello.save()
+            return '', 204, {'Location': request.path + '/' + str(old_hello.mongo_id)}
+
+        except e:
+            return ErrorModel(**{'message': e.args[0]}), 400
+
+     
+        return 'unexpected error', 500
 
 class HelloWorld(Resource):
 
