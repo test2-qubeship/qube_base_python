@@ -3,5 +3,6 @@ coverage>=4.2
 flask>=0.11.1
 flask-restful>=0.3.5
 flask-restful-swagger-2>=0.31
+flask-swagger-ui==0.0.2
 mock
 nose
