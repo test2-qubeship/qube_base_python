@@ -1,3 +1,5 @@
+from flask_restful_swagger_2 import Schema
+
 """
 the common response messages printed in swagger UI
 """
@@ -12,3 +14,12 @@ response_msgs = {
         'description': 'Internal server error'
     }
 }
+
+
+class ErrorModel(Schema):
+    type = 'object'
+    properties = {
+        'message': {
+            'type': 'string'
+        }
+    }

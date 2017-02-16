@@ -7,10 +7,11 @@ from flask_restful import reqparse
 from qube.src.api.swagger_models.parameters \
     import header_ex, path_ex, query_ex
 from qube.src.api.swagger_models.response_messages \
-    import response_msgs
+    import response_msgs, ErrorModel
 from qube.src.commons.log import Log as LOG
 from flask import  request
 from qube.src.models.hello import Hello
+import json
 
 
 params = [header_ex, path_ex, query_ex]
@@ -41,6 +42,23 @@ class HelloItemResource(Resource):
 
         return hello_data
 
+
+    def put(self, id):
+        try:
+            data = json.loads(request.data)
+            hello_record = Hello.query.get(id)
+            merged_hello_record = hello_record.wrap()
+            merged_hello_record.update(data)
+            updated_hello_record = Hello.unwrap(merged_hello_record)
+            updated_hello_record.save()
+            return '', 200, {'Location': request.path + '/' + str(updated_hello_record.mongo_id)}
+        except ValueError as e:
+            LOG.error(e)
+            return ErrorModel(**{'message': e.args[0]}), 400
+        except Exception as ex:
+            LOG.error(ex)
+            return ErrorModel(**{'message': ex.args[0]}), 500
+
 class HelloWorld(Resource):
 
     @swagger.doc(
@@ -56,17 +74,14 @@ class HelloWorld(Resource):
         Adds a hello item.
         """
         hello_data = None
-
-
         try:
             data = request.get_json()
             hello_data = Hello(name=data['name'])
             hello_data.save()
-
-        except ValueError as e:
-            return ErrorModel(**{'message': e.args[0]}), 400
-
-        if hello_data:
             return '', 201, {'Location': request.path + '/' + str(hello_data.mongo_id)}
-        else:
-            return 'unexpected error', 500
+        except ValueError as e:
+            LOG.error(e)
+            return ErrorModel(**{'message': e.args[0]}), 400
+        except Exception as ex:
+            LOG.error(ex)
+            return ErrorModel(**{'message': ex.args[0]}), 500
