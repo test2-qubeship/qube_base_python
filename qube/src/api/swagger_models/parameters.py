@@ -1,3 +1,4 @@
+from qube.src.api.swagger_models.hello import HelloModel
 """
 swagger parameters definitions
 """
@@ -23,4 +24,12 @@ query_ex = {
     "name": "sth",
     "in": "query",
     "required": False
+}
+
+body_ex = {
+    'name': 'body',
+    'description': 'Request body',
+    'in': 'body',
+    'schema': HelloModel,
+    'required': True,
 }

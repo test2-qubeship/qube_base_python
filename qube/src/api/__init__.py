@@ -6,9 +6,10 @@ Add docstring here
 from flask import Flask
 from flask.ext.mongoalchemy import MongoAlchemy
 import os
+from flask_cors import CORS
 
 app = Flask(__name__)
-
+CORS(app)
 app.config['MONGOALCHEMY_CONNECTION_STRING'] = os.environ['MONGOALCHEMY_CONNECTION_STRING']
 app.config['MONGOALCHEMY_SERVER'] = os.environ['MONGOALCHEMY_SERVER']
 app.config['MONGOALCHEMY_PORT'] = os.environ['MONGOALCHEMY_PORT']
