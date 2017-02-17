@@ -19,30 +19,36 @@ class TestHelloController(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         print("before class")
-        
-    def test_post_hello(self):
+
+    @staticmethod
+    def createTestData():
+        return {'name': 'test123123124'}
+
+    @staticmethod
+    def createTestHeaders(data):
         headers = [('Content-Type', 'application/json')]
-        data = {'name': 'test123123124'}
         json_data = json.dumps(data)
         json_data_length = len(json_data)
         headers.append(('Content-Length', json_data_length))
+        return headers
+
+    def test_post_hello(self):
 
         with app.test_client() as c:
-             with patch('mongomock.write_concern.WriteConcern.__init__',return_value=None):
-                 rv = c.post("/hello",input_stream=io.BytesIO(json.dumps(data)), headers=headers)
-                 print rv.status
-                 self.assertTrue(rv._status_code == 201)
+            data = self.createTestData()
+            headers = self.createTestHeaders(data)
+            with patch('mongomock.write_concern.WriteConcern.__init__',return_value=None):
+                rv = c.post("/hello",input_stream=io.BytesIO(json.dumps(data)), headers=headers)
+                print rv.status
+                self.assertTrue(rv._status_code == 201)
 
     def test_put_hello_item(self):
         with patch('mongomock.write_concern.WriteConcern.__init__', return_value=None):
             hello_data = Hello(name='test_record')
             hello_data.save()
             with app.test_client() as c:
-                headers = [('Content-Type', 'application/json')]
-                data = {'name': 'test123123124'}
-                json_data = json.dumps(data)
-                json_data_length = len(json_data)
-                headers.append(('Content-Length', json_data_length))
+                data = self.createTestData()
+                headers = self.createTestHeaders(data)
                 rv = c.put("/hello/"+str(hello_data.mongo_id),input_stream=io.BytesIO(json.dumps(data)), headers=headers)
                 print rv.status
                 self.assertTrue(rv._status_code == 200)
