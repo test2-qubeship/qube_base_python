@@ -11,9 +11,10 @@ import io
 
 
 with patch('pymongo.mongo_client.MongoClient', new=mongomock.MongoClient):
-    from qube.src.api import app
-    import qube.src.api.app
+    from qube.src.api import app # import app.py
+    import qube.src.api.app      # import app from module (__init__)
     from qube.src.models.hello import Hello
+
 
 class TestHelloController(unittest.TestCase):
     @classmethod
@@ -67,7 +68,6 @@ class TestHelloController(unittest.TestCase):
             self.assertTrue(rv._status_code == 200)
             self.assertTrue(len(result_collection) == 1)
 
-
     def test_get_hello_item(self):
         with patch('mongomock.write_concern.WriteConcern.__init__', return_value=None):
             hello_data = Hello(name='test_record')
@@ -91,7 +91,6 @@ class TestHelloController(unittest.TestCase):
                 self.assertTrue(rv._status_code == 204)
                 deleted_hello_record = Hello.query.get(str(hello_data.mongo_id))
                 self.assertTrue( deleted_hello_record is None)
-
 
     @classmethod
     def tearDownClass(cls):

@@ -2,15 +2,12 @@
 """
 Add docstring here
 """
-import os
 import unittest
 import mock
 import mongomock
 from mock import patch
 
-#from qube.src.api import app
 
-#app.config = MagicMock(return_value=None)
 class TestHelloModel(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
