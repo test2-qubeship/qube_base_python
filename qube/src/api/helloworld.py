@@ -20,7 +20,7 @@ from mongoalchemy.exceptions import DocumentException, MissingValueException, Ex
 
 hello_item_get_params = [header_ex, path_ex, query_ex]
 hello_item_put_params = [header_ex, path_ex, body_ex]
-hello_post_params = [header_ex, path_ex, body_ex]
+hello_post_params = [header_ex, body_ex]
 hello_item_delete_params = [header_ex, path_ex]
 hello_get_params = [header_ex]
 
@@ -66,11 +66,10 @@ class HelloItemResource(Resource):
             hello_record = Hello.query.get(id) #Hello is a mongo class
             if hello_record is None:
                 return 'not found', 404
-            merged_hello_record = hello_record.wrap()
-            merged_hello_record.update(hello_model)
-            updated_hello_record = Hello.unwrap(merged_hello_record)
-            updated_hello_record.save()
-            return '', 200, {'Location': request.path + '/' + str(updated_hello_record.mongo_id)}
+            for key in hello_model:
+                hello_record.__setattr__(key, hello_model[key])
+            hello_record.save()
+            return '', 200, {'Location': request.path + '/' + str(hello_record.mongo_id)}
         except ValueError as e:
             LOG.error(e)
             return ErrorModel(**{'message': e.args[0]}), 400
@@ -91,9 +90,6 @@ class HelloItemResource(Resource):
         Delete hello item
         """
         try:
-            #data = Hello(**request.get_json())
-            data = request.get_json()
-            #hello_data = Hello(data)
             hello = Hello.query.get(id)
             if hello is None:
                 return 'not found', 404
@@ -150,13 +146,10 @@ class HelloWorld(Resource):
         hello_data = None
         try:
             hello_model = HelloModel(**request.get_json())
-            #data = request.get_json()
-            #hello_data = Hello.unwrap(hello_model)
             new_hello = Hello();
-            new_hello_dictionary = new_hello.wrap()
-            new_hello_dictionary.update(hello_model)
-            hello_data =Hello.unwrap(new_hello_dictionary) 
-           # hello_data = Hello(name=data['name'])
+            for key in hello_model:
+                new_hello.__setattr__(key, hello_model[key])
+            hello_data = new_hello
             hello_data.save()
             return '', 201, {'Location': request.path + '/' + str(hello_data.mongo_id)}
         except ValueError as e:

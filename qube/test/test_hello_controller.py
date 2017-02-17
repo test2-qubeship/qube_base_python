@@ -7,6 +7,8 @@ import unittest
 import mock
 import mongomock
 from mock import patch
+import json
+import io
 
 #from qube.src.api import app
 
@@ -22,17 +24,19 @@ class TestHelloController(unittest.TestCase):
         import qube.src.api.app
         from qube.src.models.hello import Hello
         from qube.src.api.helloworld import HelloWorld
-        
-        #with patch('flask.request.get_json', return_value=test):
-        #     hello_world = HelloWorld()
-        #     msg,code,headers = hello_world.post();
-        #     self.assertTrue(code=200)    
+
+        headers = [('Content-Type', 'application/json')]
+        data = {'name': 'test123123124'}
+        json_data = json.dumps(data)
+        json_data_length = len(json_data)
+        headers.append(('Content-Length', json_data_length))
+
         with app.test_client() as c:
              with patch('mongomock.write_concern.WriteConcern.__init__',return_value=None):
-                 rv= c.post("/hello",input_stream=open('/Users/veeren/Documents/CA/qubeship/qube_base_python/qube/test/input','r'),headers={'content-type':'application/json'})
-                 print rv.status 
-                 self.assertTrue(rv.status == 200)
-             
+                 rv = c.post("/hello",input_stream=io.BytesIO(json.dumps(data)), headers=headers)
+                 print rv.status
+                 self.assertTrue(rv._status_code == 201)
+
 
     @classmethod
     def tearDownClass(cls):
