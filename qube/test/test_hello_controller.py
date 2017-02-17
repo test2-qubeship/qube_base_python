@@ -4,23 +4,18 @@ Add docstring here
 """
 import os
 import unittest
-import mock
 import mongomock
 from mock import patch
 import json
 import io
-import sys
-from mock import MagicMock
-#from qube.src.api import app
+
 
 with patch('pymongo.mongo_client.MongoClient', new=mongomock.MongoClient):
     from qube.src.api import app
     import qube.src.api.app
     from qube.src.models.hello import Hello
 
-#app.config = MagicMock(return_value=None)
 class TestHelloController(unittest.TestCase):
-
     @classmethod
     def setUpClass(cls):
         print("before class")
