@@ -90,7 +90,7 @@ class TestHelloController(unittest.TestCase):
                 print rv.status
                 self.assertTrue(rv._status_code == 204)
                 deleted_hello_record = Hello.query.get(str(hello_data.mongo_id))
-                self.assertTrue( deleted_hello_record is None)
+                self.assertIsNone( deleted_hello_record)
 
     @classmethod
     def tearDownClass(cls):

@@ -20,7 +20,7 @@ class TestHelloModel(unittest.TestCase):
         with patch('mongomock.write_concern.WriteConcern.__init__',return_value=None):
             hello_data.save()
         
-        self.assertTrue(hello_data.mongo_id is not None)
+        self.assertIsNotNone(hello_data.mongo_id)
 
     @classmethod
     def tearDownClass(cls):
