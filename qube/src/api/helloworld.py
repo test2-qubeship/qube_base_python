@@ -151,8 +151,12 @@ class HelloWorld(Resource):
         try:
             hello_model = HelloModel(**request.get_json())
             #data = request.get_json()
-            hello_data = Hello.unwrap (hello_model)
-            #hello_data = Hello(name=data['name'])
+            #hello_data = Hello.unwrap(hello_model)
+            new_hello = Hello();
+            new_hello_dictionary = new_hello.wrap()
+            new_hello_dictionary.update(hello_model)
+            hello_data =Hello.unwrap(new_hello_dictionary) 
+           # hello_data = Hello(name=data['name'])
             hello_data.save()
             return '', 201, {'Location': request.path + '/' + str(hello_data.mongo_id)}
         except ValueError as e:

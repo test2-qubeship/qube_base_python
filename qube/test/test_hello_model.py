@@ -24,7 +24,6 @@ class TestHelloModel(unittest.TestCase):
             hello_data.save()
         
         self.assertTrue(hello_data.mongo_id is not None)
-        print hello_data.mongo_id
 
     @classmethod
     def tearDownClass(cls):

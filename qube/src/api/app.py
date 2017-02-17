@@ -35,7 +35,7 @@ API_URL = '/specs' # Our API url (can of course be a local resource)
 #api = Api(app, api_version='0.1', api_spec_url=API_URL)
 api = Api(app, api_version='0.1', api_spec_url=API_URL)
 
-DEFAULT_HOST = os.environ['DEFAULT_LISTENER_HOST']
+DEFAULT_HOST = os.getenv('DEFAULT_LISTENER_HOST','localhost')
 DEFAULT_PORT = int(os.environ.get('DEFAULT_LISTENER_PORT', '5000'))
 DEBUG = os.environ.get('DEBUG', 'False') \
     in ("yes", "y", "true", "True", "t", "1")
