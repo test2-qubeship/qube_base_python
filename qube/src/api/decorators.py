@@ -8,7 +8,7 @@ from flask import request, Response
 import requests
 
 
-auth_url = os.environ['QUBESHIP_AUTH_URL']
+auth_url = os.getenv('QUBESHIP_AUTH_URL','https://api.qubeship.io/v1/auth')
 
 
 def validate_with_qubeship_auth(auth_token):

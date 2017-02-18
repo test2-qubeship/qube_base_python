@@ -156,8 +156,13 @@ class HelloWorld(Resource):
             hello_data = new_hello
             hello_data.save()
             hello_result = hello_data.wrap()
+
             clean_nonserializable_attributes(hello_result)
-            return hello_result, 201, {'Location': request.path + '/' + str(hello_data.mongo_id)}
+            response = HelloModelPostResponse()
+            for key in response.properties:
+                response[key] = hello_result[key]
+
+            return response, 201, {'Location': request.path + '/' + str(hello_data.mongo_id)}
         except ValueError as e:
             LOG.error(e)
             return ErrorModel(**{'message': e.args[0]}), 400
