@@ -81,7 +81,7 @@ class TestHelloController(unittest.TestCase):
                     print rv.status
                     self.assertTrue(rv._status_code == 204)
                 #updated_record = Hello.query.get(hello_data.mongo_id)
-                #self.assertTrue(updated_record.name  == service ['name'])
+                #self.assertTrue(updated_record.name  == services ['name'])
 
     def test_get_hello(self):
         with patch('mongomock.write_concern.WriteConcern.__init__', return_value=None):

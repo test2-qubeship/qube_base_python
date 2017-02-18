@@ -11,3 +11,4 @@ flask_cors==3.0.2
 mongomock==3.7.0
 magicmock==0.03
 requests
+enum==0.4.6

@@ -16,6 +16,8 @@ from qube.src.models.hello import Hello
 from qube.src.api.swagger_models.hello import *
 from qube.src.commons.utils import clean_nonserializable_attributes
 from qube.src.api.decorators import login_required
+from qube.src.services.helloservice import HelloService
+from qube.src.commons.error import HelloServiceError
 import json
 import time
 from mongoalchemy.exceptions import DocumentException, MissingValueException, ExtraValueException, FieldNotRetrieved, BadFieldSpecification
@@ -42,15 +44,16 @@ class HelloItemResource(Resource):
     def get(self, authcontext,id):
         """gets an hello item that omar has changed
         """
-        LOG.debug("hello world")
-
-
-        data = Hello.query.get(id) #filter with id not working, unable to proceed with tenant filter
-        if data is None:
-            return 'not found', 404
-
-        hello_data = data.wrap()
-        clean_nonserializable_attributes(hello_data)
+        try:
+            LOG.debug("hello world")
+            hello_data = HelloService().find_hello_by_id(id)
+            clean_nonserializable_attributes(hello_data)
+        except HelloServiceError as e:
+            LOG.error(e)
+            return ErrorModel(**{'message': e.args[0]}), e.args[1]
+        except ValueError as e:
+            LOG.error(e)
+            return ErrorModel(**{'message': e.args[0]}), 400
         return HelloModel(**hello_data), 200
 
     @swagger.doc(
@@ -68,15 +71,13 @@ class HelloItemResource(Resource):
         """
         try:
             hello_model = HelloModelPut(**request.get_json())
-            hello_record = Hello.query.get(id) #Hello is a mongo class
-            if hello_record is None:
-                return 'not found', 404
-            for key in hello_model:
-                hello_record.__setattr__(key, hello_model[key])
-            hello_record.modifiedBy = authcontext['userId']
-            hello_record.modifiedDate = str(int(time.time()))
-            hello_record.save()
-            return '', 204, {'Location': request.path + '/' + str(hello_record.mongo_id)}
+            user_id = authcontext['userId']
+            tenant_id = authcontext['tenantId']
+            HelloService().update_hello(hello_model,tenant_id,user_id,id)
+            return '', 204
+        except HelloServiceError as e:
+            LOG.error(e)
+            return ErrorModel(**{'message': e.args[0]}), e.args[1]
         except ValueError as e:
             LOG.error(e)
             return ErrorModel(**{'message': e.args[0]}), 400
@@ -98,11 +99,11 @@ class HelloItemResource(Resource):
         Delete hello item
         """
         try:
-            hello = Hello.query.get(id)
-            if hello is None:
-                return 'not found', 404
-            hello.remove()
+            HelloService().delete_hello(authcontext['tenantId'],id)
             return '', 204
+        except HelloServiceError as e:
+            LOG.error(e)
+            return ErrorModel(**{'message': e.args[0]}), e.args[1]
         except ValueError as e:
             LOG.error(e)
             return ErrorModel(**{'message': e.args[0]}), 400
@@ -128,12 +129,7 @@ class HelloWorld(Resource):
         gets all hello items
         """
         LOG.debug("Serving  Get all request")
-        hello_list = []
-        data  = Hello.query.filter(Hello.tenantId == authcontext['tenantId'] )
-        for hello_data_item in data:
-            hello_data = hello_data_item.wrap()
-            clean_nonserializable_attributes(hello_data)
-            hello_list.append(hello_data)
+        hello_list = HelloService().get_all_hellos(authcontext['tenantId'])
         #normalize the name for 'id'
         return hello_list, 200
     
@@ -154,25 +150,15 @@ class HelloWorld(Resource):
         hello_data = None
         try:
             hello_model = HelloModelPost(**request.get_json())
-            new_hello = Hello();
-            for key in hello_model:
-                new_hello.__setattr__(key, hello_model[key])
-            hello_data = new_hello
-            hello_data.tenantId = authcontext['tenantId']
-            hello_data.orgId = authcontext['orgId']
-            hello_data.createdBy = authcontext['userId']
-            hello_data.createdDate = str(int(time.time()))
-            hello_data.modifiedBy = authcontext['userId']
-            hello_data.modifiedDate = str(int(time.time()))
-            hello_data.save()
-            hello_result = hello_data.wrap()
-
-            clean_nonserializable_attributes(hello_result)
+            tenant_id = authcontext['tenantId']
+            org_id = authcontext['tenantId']
+            user_id = authcontext['userId']
+            hello_result = HelloService().save_hello(hello_model,tenant_id,org_id,user_id)
             response = HelloModelPostResponse()
             for key in response.properties:
                 response[key] = hello_result[key]
 
-            return response, 201, {'Location': request.path + '/' + str(hello_data.mongo_id)}
+            return response, 201, {'Location': request.path + '/' + str(response['id'])}
         except ValueError as e:
             LOG.error(e)
             return ErrorModel(**{'message': e.args[0]}), 400
