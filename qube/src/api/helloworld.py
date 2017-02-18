@@ -144,12 +144,14 @@ class HelloWorld(Resource):
         hello_data = None
         try:
             hello_model = HelloModel(**request.get_json())
-            new_hello = Hello();
+            new_hello = Hello()
             for key in hello_model:
                 new_hello.__setattr__(key, hello_model[key])
             hello_data = new_hello
             hello_data.save()
-            return '', 201, {'Location': request.path + '/' + str(hello_data.mongo_id)}
+            hello_result = hello_data.wrap()
+            clean_nonserializable_attributes(hello_result)
+            return hello_result, 201, {'Location': request.path + '/' + str(hello_data.mongo_id)}
         except ValueError as e:
             LOG.error(e)
             return ErrorModel(**{'message': e.args[0]}), 400
