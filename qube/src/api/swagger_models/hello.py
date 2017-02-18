@@ -8,6 +8,9 @@ class HelloModel(Schema):
         },
         'name': {
             'type': 'string'
+        },
+        'desc': {
+            'type': 'string'
         }
     }
     required = ['name']
@@ -28,10 +31,19 @@ class HelloModelPut(Schema):
     properties = {
         'name': {
             'type': 'string'
+        },
+        'desc': {
+            'type': 'string'
         }
     }
-    required = ['name']
 
+class HelloModelPostResponse(Schema):
+    type = 'object'
+    properties = {
+        'id': {
+            'type': 'string'
+        }
+    }
 
 class HelloErrorModel(Schema):
     type = 'object'
