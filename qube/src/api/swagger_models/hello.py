@@ -11,6 +11,24 @@ class HelloModel(Schema):
         },
         'desc': {
             'type': 'string'
+        },
+        'tenantId':{
+            'type':'string'
+        },
+        'orgId':{
+            'type':'string'
+        },
+        'createdBy':{
+            'type':'string'
+        },
+        'createdDate':{
+            'type':'string'
+        },
+        'modifiedBy':{
+            'type':'string'
+        },
+        'modifiedDate': {
+            'type': 'string'
         }
     }
     required = ['name']
@@ -20,6 +38,9 @@ class HelloModelPost(Schema):
     type = 'object'
     properties = {
         'name': {
+            'type': 'string'
+        },
+        'desc': {
             'type': 'string'
         }
     }

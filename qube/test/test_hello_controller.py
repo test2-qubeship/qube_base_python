@@ -8,6 +8,7 @@ import mongomock
 from mock import patch
 import json
 import io
+import time
 from mock import MagicMock
 
 
@@ -28,6 +29,21 @@ class TestHelloController(unittest.TestCase):
         return {'name': 'test123123124'}
 
     @staticmethod
+    def userinfo():
+        userinfo = {
+            'id': '1009009009988',
+            'type': 'org',
+            'tenant':{
+                'id':'23432523452345',
+                'orgs':[{
+                    'id':'987656789765670'
+                }]
+            }
+        }
+
+        return json.dumps(userinfo)
+
+    @staticmethod
     def createTestHeaders(data):
         headers = [('Content-Type', 'application/json'),('Authorization','Bearer authorizationmockedvaluedoesntmatter')]
         if(data is not None):
@@ -42,7 +58,7 @@ class TestHelloController(unittest.TestCase):
             data = self.createTestData()
             headers = self.createTestHeaders(data)
             with patch('mongomock.write_concern.WriteConcern.__init__',return_value=None):
-                with patch('qube.src.api.decorators.validate_with_qubeship_auth', return_value=200):
+                with patch('qube.src.api.decorators.validate_with_qubeship_auth', return_value=(self.userinfo(),200)):
                     rv = c.post("/hello",input_stream=io.BytesIO(json.dumps(data)), headers=headers)
                     print rv.status
                     self.assertTrue(rv._status_code == 201)
@@ -50,11 +66,17 @@ class TestHelloController(unittest.TestCase):
     def test_put_hello_item(self):
         with patch('mongomock.write_concern.WriteConcern.__init__', return_value=None):
             hello_data = Hello(name='test_record')
+            hello_data.tenantId = "23432523452345"
+            hello_data.orgId = "987656789765670"
+            hello_data.createdBy = "1009009009988"
+            hello_data.modifiedBy = "1009009009988"
+            hello_data.createDate = str(int(time.time()))
+            hello_data.modifiedDate = str(int(time.time()))
             hello_data.save()
             with app.test_client() as c:
                 data = self.createTestData()
                 headers = self.createTestHeaders(data)
-                with patch('qube.src.api.decorators.validate_with_qubeship_auth', return_value=200):
+                with patch('qube.src.api.decorators.validate_with_qubeship_auth', return_value=(self.userinfo(),200)):
                     rv = c.put("/hello/"+str(hello_data.mongo_id),input_stream=io.BytesIO(json.dumps(data)), headers=headers)
                     print rv.status
                     self.assertTrue(rv._status_code == 204)
@@ -64,10 +86,16 @@ class TestHelloController(unittest.TestCase):
     def test_get_hello(self):
         with patch('mongomock.write_concern.WriteConcern.__init__', return_value=None):
             hello_data = Hello(name='test_record')
+            hello_data.tenantId = "23432523452345"
+            hello_data.orgId = "987656789765670"
+            hello_data.createdBy = "1009009009988"
+            hello_data.modifiedBy = "1009009009988"
+            hello_data.createDate = str(int(time.time()))
+            hello_data.modifiedDate = str(int(time.time()))
             hello_data.save()
         with app.test_client() as c:
             headers = self.createTestHeaders(None)
-            with patch('qube.src.api.decorators.validate_with_qubeship_auth', return_value=200):
+            with patch('qube.src.api.decorators.validate_with_qubeship_auth', return_value=(self.userinfo(),200)):
                 rv = c.get("/hello", headers=headers)
                 print rv.status
                 result_collection = json.loads(rv.data)
@@ -77,10 +105,16 @@ class TestHelloController(unittest.TestCase):
     def test_get_hello_item(self):
         with patch('mongomock.write_concern.WriteConcern.__init__', return_value=None):
             hello_data = Hello(name='test_record')
+            hello_data.tenantId = "23432523452345"
+            hello_data.orgId = "987656789765670"
+            hello_data.createdBy = "1009009009988"
+            hello_data.modifiedBy = "1009009009988"
+            hello_data.createDate = str(int(time.time()))
+            hello_data.modifiedDate = str(int(time.time()))
             hello_data.save()
             with app.test_client() as c:
                 headers = self.createTestHeaders(None)
-                with patch('qube.src.api.decorators.validate_with_qubeship_auth', return_value=200):
+                with patch('qube.src.api.decorators.validate_with_qubeship_auth', return_value=(self.userinfo(),200)):
                     rv = c.get("/hello/"+str(hello_data.mongo_id), headers=headers)
                     print rv.status
                     result = json.loads(rv.data)
@@ -90,10 +124,18 @@ class TestHelloController(unittest.TestCase):
     def test_delete_hello_item(self):
         with patch('mongomock.write_concern.WriteConcern.__init__', return_value=None):
             hello_data = Hello(name='test_record')
+            hello_data.tenantId = "23432523452345"
+            hello_data.orgId = "987656789765670"
+            hello_data.createdBy = "1009009009988"
+            hello_data.modifiedBy = "1009009009988"
+            hello_data.createDate = str(int(time.time()))
+            hello_data.modifiedDate = str(int(time.time()))
+
+
             hello_data.save()
             with app.test_client() as c:
                 headers = self.createTestHeaders(None)
-                with patch('qube.src.api.decorators.validate_with_qubeship_auth', return_value=200):
+                with patch('qube.src.api.decorators.validate_with_qubeship_auth', return_value=(self.userinfo(),200)):
                     rv = c.delete("/hello/"+str(hello_data.mongo_id), headers=headers)
                     print rv.status
                     self.assertTrue(rv._status_code == 204)

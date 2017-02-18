@@ -14,11 +14,11 @@ auth_url = os.getenv('QUBESHIP_AUTH_URL','https://api.qubeship.io/v1/auth')
 def validate_with_qubeship_auth(auth_token):
     """ check if the auth_token is valid
     """
-    headers = {'content-type': 'application/json'}
-    payload = {'token': auth_token}
-    resp = requests.post(auth_url + '/validate',
-                         headers=headers, data=json.dumps(payload))
-    return resp.status_code
+    headers = {'content-type': 'application/json','Authorization': auth_token}
+    #payload = {'token': auth_token}
+    resp = requests.get(auth_url + '/user',
+                         headers=headers)
+    return resp.text, resp.status_code
 
 
 def login_required(f):
@@ -36,6 +36,17 @@ def login_required(f):
         resp = Response(js, status=401, mimetype='application/json')
         return resp
 
+    def unsupported_token():
+        """ return error message
+        """
+        data = {
+            'error': 'master tokens are forbidden instead use org tokens'
+        }
+        js = json.dumps(data)
+
+        resp = Response(js, status=403, mimetype='application/json')
+        return resp
+
     @wraps(f)
     def decorated_function(*args, **kwargs):
         """ definition of login_required
@@ -49,8 +60,19 @@ def login_required(f):
             return auth_required()
 
         # validate auth_token
-        if validate_with_qubeship_auth(auth_token) != 200:
+        response, status_code = validate_with_qubeship_auth(auth_token)
+        if status_code != 200:
             return auth_required()
+
+        userinfo = json.loads(response)
+        if userinfo['type'] != "org":
+            return unsupported_token()
+
+        kwargs['authcontext'] = {
+            'userId': userinfo['id'],
+            'orgId': userinfo['tenant']['orgs'][0]['id'],
+            'tenantId':userinfo['tenant']['id']
+        }
 
         return f(*args, **kwargs)
     return decorated_function

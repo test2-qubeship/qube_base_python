@@ -17,6 +17,7 @@ from qube.src.api.swagger_models.hello import *
 from qube.src.commons.utils import clean_nonserializable_attributes
 from qube.src.api.decorators import login_required
 import json
+import time
 from mongoalchemy.exceptions import DocumentException, MissingValueException, ExtraValueException, FieldNotRetrieved, BadFieldSpecification
 
 
@@ -38,18 +39,19 @@ class HelloItemResource(Resource):
     )
 
     @login_required
-    def get(self, id):
+    def get(self, authcontext,id):
         """gets an hello item that omar has changed
         """
         LOG.debug("hello world")
 
-        data = Hello.query.get(id)
+
+        data = Hello.query.get(id) #filter with id not working, unable to proceed with tenant filter
         if data is None:
             return 'not found', 404
 
         hello_data = data.wrap()
         clean_nonserializable_attributes(hello_data)
-        return HelloModel(**hello_data)
+        return HelloModel(**hello_data), 200
 
     @swagger.doc(
         {
@@ -60,7 +62,7 @@ class HelloItemResource(Resource):
         }
     )
     @login_required
-    def put(self, id):
+    def put(self,authcontext, id):
         """
         updates an hello item
         """
@@ -71,6 +73,8 @@ class HelloItemResource(Resource):
                 return 'not found', 404
             for key in hello_model:
                 hello_record.__setattr__(key, hello_model[key])
+            hello_record.modifiedBy = authcontext['userId']
+            hello_record.modifiedDate = str(int(time.time()))
             hello_record.save()
             return '', 204, {'Location': request.path + '/' + str(hello_record.mongo_id)}
         except ValueError as e:
@@ -89,7 +93,7 @@ class HelloItemResource(Resource):
         }
     )
     @login_required
-    def delete(self, id):
+    def delete(self, authcontext,id):
         """
         Delete hello item
         """
@@ -119,19 +123,19 @@ class HelloWorld(Resource):
         }
     )
     @login_required
-    def get(self):
+    def get(self,authcontext):
         """
         gets all hello items
         """
         LOG.debug("Serving  Get all request")
         hello_list = []
-        data = Hello.query.all()
+        data  = Hello.query.filter(Hello.tenantId == authcontext['tenantId'] )
         for hello_data_item in data:
             hello_data = hello_data_item.wrap()
             clean_nonserializable_attributes(hello_data)
             hello_list.append(hello_data)
         #normalize the name for 'id'
-        return hello_list
+        return hello_list, 200
     
 
     @swagger.doc(
@@ -143,17 +147,23 @@ class HelloWorld(Resource):
         }
     )
     @login_required
-    def post(self):
+    def post(self,authcontext):
         """
         Adds a hello item.
         """
         hello_data = None
         try:
             hello_model = HelloModelPost(**request.get_json())
-            new_hello = Hello()
+            new_hello = Hello();
             for key in hello_model:
                 new_hello.__setattr__(key, hello_model[key])
             hello_data = new_hello
+            hello_data.tenantId = authcontext['tenantId']
+            hello_data.orgId = authcontext['orgId']
+            hello_data.createdBy = authcontext['userId']
+            hello_data.createdDate = str(int(time.time()))
+            hello_data.modifiedBy = authcontext['userId']
+            hello_data.modifiedDate = str(int(time.time()))
             hello_data.save()
             hello_result = hello_data.wrap()
 
