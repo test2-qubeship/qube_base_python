@@ -13,8 +13,9 @@ from qube.src.api.swagger_models.response_messages import (
 from qube.src.commons.log import Log as LOG
 from flask import  request
 from qube.src.models.hello import Hello
-from qube.src.api.swagger_models.hello import HelloModel
+from qube.src.api.swagger_models.hello import *
 from qube.src.commons.utils import clean_nonserializable_attributes
+from qube.src.api.decorators import login_required
 import json
 from mongoalchemy.exceptions import DocumentException, MissingValueException, ExtraValueException, FieldNotRetrieved, BadFieldSpecification
 
@@ -35,6 +36,8 @@ class HelloItemResource(Resource):
             'responses': get_response_msgs
         }
     )
+
+    @login_required
     def get(self, id):
         """gets an hello item that omar has changed
         """
@@ -56,19 +59,20 @@ class HelloItemResource(Resource):
             'responses': put_response_msgs
         }
     )
+    @login_required
     def put(self, id):
         """
         updates an hello item
         """
         try:
-            hello_model = HelloModel(**request.get_json())
+            hello_model = HelloModelPut(**request.get_json())
             hello_record = Hello.query.get(id) #Hello is a mongo class
             if hello_record is None:
                 return 'not found', 404
             for key in hello_model:
                 hello_record.__setattr__(key, hello_model[key])
             hello_record.save()
-            return '', 200, {'Location': request.path + '/' + str(hello_record.mongo_id)}
+            return '', 204, {'Location': request.path + '/' + str(hello_record.mongo_id)}
         except ValueError as e:
             LOG.error(e)
             return ErrorModel(**{'message': e.args[0]}), 400
@@ -83,7 +87,8 @@ class HelloItemResource(Resource):
             'parameters': hello_item_delete_params,
             'responses': del_response_msgs
         }
-    )    
+    )
+    @login_required
     def delete(self, id):
         """
         Delete hello item
@@ -112,7 +117,8 @@ class HelloWorld(Resource):
             'parameters': hello_get_params,
             'responses': get_response_msgs
         }
-    )    
+    )
+    @login_required
     def get(self):
         """
         gets all hello items
@@ -120,7 +126,7 @@ class HelloWorld(Resource):
         LOG.debug("Serving  Get all request")
         hello_list = []
         data = Hello.query.all()
-        #hello_data = data.wrap()
+        #hello_data = service.wrap()
         for hello_data_item in data:
             hello_data = hello_data_item.wrap()
             clean_nonserializable_attributes(hello_data)
@@ -137,13 +143,14 @@ class HelloWorld(Resource):
             'responses': post_response_msgs
         }
     )
+    @login_required
     def post(self):
         """
         Adds a hello item.
         """
         hello_data = None
         try:
-            hello_model = HelloModel(**request.get_json())
+            hello_model = HelloModelPost(**request.get_json())
             new_hello = Hello();
             for key in hello_model:
                 new_hello.__setattr__(key, hello_model[key])

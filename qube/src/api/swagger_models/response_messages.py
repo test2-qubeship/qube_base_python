@@ -1,5 +1,5 @@
 from flask_restful_swagger_2 import Schema
-from qube.src.api.swagger_models.hello import HelloModel, HelloModelPost, HelloErrorModel
+from qube.src.api.swagger_models.hello import HelloModel, HelloModelPost, HelloErrorModel,HelloModelPostResponse
 
 """
 the common response messages printed in swagger UI
@@ -8,7 +8,7 @@ the common response messages printed in swagger UI
 post_response_msgs = {
     '201': {
         'description': 'CREATED',
-        'schema': {"type": "string"}
+        'schema': HelloModelPostResponse
     },
     '401': {
         'description': 'Unauthorized'    
@@ -46,9 +46,8 @@ get_response_msgs = {
 }
 
 put_response_msgs = {
-    '202': {
-        'description': 'ACCEPTED',
-        'schema': HelloModel
+    '204': {
+        'description': 'No Content'
     },
     '401': {
         'description': 'Unauthorized'
@@ -66,8 +65,8 @@ put_response_msgs = {
 }
 
 del_response_msgs = {
-    '202': {
-        'description': 'ACCEPTED'
+    '204': {
+        'description': 'No Content'
     },
     '401': {
         'description': 'Unauthorized'
@@ -83,7 +82,6 @@ del_response_msgs = {
         'schema': HelloErrorModel
     }
 }
-
 
 
 response_msgs = {

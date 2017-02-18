@@ -10,3 +10,4 @@ Flask-MongoAlchemy==0.7.2
 flask_cors==3.0.2
 mongomock==3.7.0
 magicmock==0.03
+requests
