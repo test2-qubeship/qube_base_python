@@ -50,7 +50,7 @@ class HelloItemResource(Resource):
             clean_nonserializable_attributes(hello_data)
         except HelloServiceError as e:
             LOG.error(e)
-            return ErrorModel(**{'message': e.args[0]}), e.args[1]
+            return ErrorModel(**{'message': e.args[0]}), e.errors
         except ValueError as e:
             LOG.error(e)
             return ErrorModel(**{'message': e.args[0]}), 400
@@ -77,7 +77,7 @@ class HelloItemResource(Resource):
             return '', 204
         except HelloServiceError as e:
             LOG.error(e)
-            return ErrorModel(**{'message': e.args[0]}), e.args[1]
+            return ErrorModel(**{'message': e.args[0]}), e.errors
         except ValueError as e:
             LOG.error(e)
             return ErrorModel(**{'message': e.args[0]}), 400
@@ -103,16 +103,13 @@ class HelloItemResource(Resource):
             return '', 204
         except HelloServiceError as e:
             LOG.error(e)
-            return ErrorModel(**{'message': e.args[0]}), e.args[1]
+            return ErrorModel(**{'message': e.args[0]}), e.errors
         except ValueError as e:
             LOG.error(e)
             return ErrorModel(**{'message': e.args[0]}), 400
         except Exception as ex:
             LOG.error(ex)
             return ErrorModel(**{'message': ex.args[0]}), 500
-
-     
-        return 'unexpected error', 500
 
 class HelloWorld(Resource):
     @swagger.doc(
