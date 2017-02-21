@@ -17,56 +17,56 @@ class HelloService:
                                     entity_id + ' not found',
                                     ErrorCodes.NOT_FOUND)
 
-        hello_data = data.wrap()
-        clean_nonserializable_attributes(hello_data)
-        return hello_data
+        data = data.wrap()
+        clean_nonserializable_attributes(data)
+        return data
 
     def get_all(self):
-        hello_list = []
+        list = []
         data = Hello.query.filter(Hello.tenantId ==
                                   self.auth_context.tenant_id)
-        for hello_data_item in data:
-            hello_data = hello_data_item.wrap()
-            clean_nonserializable_attributes(hello_data)
-            hello_list.append(hello_data)
-        return hello_list
+        for data_item in data:
+            data = data_item.wrap()
+            clean_nonserializable_attributes(data)
+            list.append(data)
+        return list
 
-    def save(self, hello_model):
-        new_hello = Hello()
-        for key in hello_model:
-            new_hello.__setattr__(key, hello_model[key])
-        hello_data = new_hello
-        hello_data.tenantId = self.auth_context.tenant_id
-        hello_data.orgId = self.auth_context.org_id
-        hello_data.createdBy = self.auth_context.user_id
-        hello_data.createdDate = str(int(time.time()))
-        hello_data.modifiedBy = self.auth_context.user_id
-        hello_data.modifiedDate = str(int(time.time()))
-        hello_data.save()
-        hello_result = hello_data.wrap()
+    def save(self, model):
+        new_data = Hello()
+        for key in model:
+            new_data.__setattr__(key, model[key])
+        data = new_data
+        data.tenantId = self.auth_context.tenant_id
+        data.orgId = self.auth_context.org_id
+        data.createdBy = self.auth_context.user_id
+        data.createdDate = str(int(time.time()))
+        data.modifiedBy = self.auth_context.user_id
+        data.modifiedDate = str(int(time.time()))
+        data.save()
+        result = data.wrap()
 
-        clean_nonserializable_attributes(hello_result)
-        return hello_result
+        clean_nonserializable_attributes(result)
+        return result
 
-    def update(self, hello_model, entity_id):
+    def update(self, model, entity_id):
 
-        hello_record = Hello.query.get(entity_id)  # Hello is a mongo class
-        if hello_record is None:
+        record = Hello.query.get(entity_id)  # Hello is a mongo class
+        if record is None:
             raise HelloServiceError('hello ' + entity_id +
                                     ' not found', ErrorCodes.NOT_FOUND)
 
-        for key in hello_model:
-            hello_record.__setattr__(key, hello_model[key])
-        hello_record.modifiedBy = self.auth_context.user_id
-        hello_record.modifiedDate = str(int(time.time()))
-        hello_record.save()
-        hello_result = hello_record.wrap()
-        clean_nonserializable_attributes(hello_result)
-        return hello_result
+        for key in model:
+            record.__setattr__(key, model[key])
+        record.modifiedBy = self.auth_context.user_id
+        record.modifiedDate = str(int(time.time()))
+        record.save()
+        result = record.wrap()
+        clean_nonserializable_attributes(result)
+        return result
 
     def delete(self, entity_id):
-        hello = Hello.query.get(entity_id)
-        if hello is None:
+        data = Hello.query.get(entity_id)
+        if data is None:
             raise HelloServiceError('hello ' + entity_id +
                                     ' not found', ErrorCodes.NOT_FOUND)
-        hello.remove()
+        data.remove()

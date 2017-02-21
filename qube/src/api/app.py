@@ -12,7 +12,7 @@ from qube.src.api.flask_swagger_ui import get_swaggerui_blueprint
 from pkg_resources import resource_filename
 
 from qube.src.api import app
-from qube.src.api.helloworld import HelloItemResource, HelloWorld
+from qube.src.api.hellocontroller import ResourceItemController, ResourceController
 from qube.src.commons.log import Log as LOG
 
 logging_config = resource_filename(
@@ -63,8 +63,8 @@ docs.append(api.get_swagger_doc())
 """
 app.register_blueprint(swaggerui_blueprint, url_prefix=SWAGGER_URL)
 
-api.add_resource(HelloWorld, '/hello')
-api.add_resource(HelloItemResource, '/hello/<string:entity_id>')
+api.add_resource(ResourceController, '/hello')
+api.add_resource(ResourceItemController, '/hello/<string:entity_id>')
 
 
 def main():

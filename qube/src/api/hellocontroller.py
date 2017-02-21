@@ -26,7 +26,7 @@ get_params = [header_ex]
 post_params = [header_ex, body_post_ex]
 
 
-class HelloItemResource(Resource):
+class ResourceItemController(Resource):
     @swagger.doc(
         {
             'tags': ['Hello World'],
@@ -41,16 +41,16 @@ class HelloItemResource(Resource):
         """
         try:
             LOG.debug("Get details by id %s ",entity_id)
-            hello_data = HelloService(authcontext['context'])\
+            data = HelloService(authcontext['context'])\
                 .find_by_id(entity_id)
-            clean_nonserializable_attributes(hello_data)
+            clean_nonserializable_attributes(data)
         except HelloServiceError as e:
             LOG.error(e)
             return ErrorModel(**{'message': e.args[0]}), e.errors
         except ValueError as e:
             LOG.error(e)
             return ErrorModel(**{'message': e.args[0]}), 400
-        return HelloModel(**hello_data), 200
+        return HelloModel(**data), 200
 
     @swagger.doc(
         {
@@ -66,9 +66,9 @@ class HelloItemResource(Resource):
         updates an hello item
         """
         try:
-            hello_model = HelloModelPut(**request.get_json())
+            model = HelloModelPut(**request.get_json())
             context = authcontext['context']
-            HelloService(context).update(hello_model, entity_id)
+            HelloService(context).update(model, entity_id)
             return EMPTY, 204
         except HelloServiceError as e:
             LOG.error(e)
@@ -107,7 +107,7 @@ class HelloItemResource(Resource):
             return ErrorModel(**{'message': ex.args[0]}), 500
 
 
-class HelloWorld(Resource):
+class ResourceController(Resource):
     @swagger.doc(
         {
             'tags': ['Hello World'],
@@ -122,9 +122,9 @@ class HelloWorld(Resource):
         gets all hello items
         """
         LOG.debug("Serving  Get all request")
-        hello_list = HelloService(authcontext['context']).get_all()
+        list = HelloService(authcontext['context']).get_all()
         # normalize the name for 'id'
-        return hello_list, 200
+        return list, 200
 
     @swagger.doc(
         {
@@ -140,13 +140,13 @@ class HelloWorld(Resource):
         Adds a hello item.
         """
         try:
-            hello_model = HelloModelPost(**request.get_json())
-            hello_result = HelloService(authcontext['context'])\
-                .save(hello_model)
+            model = HelloModelPost(**request.get_json())
+            result = HelloService(authcontext['context'])\
+                .save(model)
 
             response = HelloModelPostResponse()
             for key in response.properties:
-                response[key] = hello_result[key]
+                response[key] = result[key]
 
             return (response, 201,
                     {'Location': request.path + '/' + str(response['id'])})
