@@ -7,17 +7,18 @@ import os
 from flask import request, Response
 import requests
 
-from  qube.src.commons.context import AuthContext
-auth_url = os.getenv('QUBESHIP_AUTH_URL','https://api.qubeship.io/v1/auth')
+from qube.src.commons.context import AuthContext
+
+auth_url = os.getenv('QUBESHIP_AUTH_URL', 'https://api.qubeship.io/v1/auth')
 
 
 def validate_with_qubeship_auth(auth_token):
     """ check if the auth_token is valid
     """
-    headers = {'content-type': 'application/json','Authorization': auth_token}
-    #payload = {'token': auth_token}
+    headers = {'content-type': 'application/json', 'Authorization': auth_token}
+    # payload = {'token': auth_token}
     resp = requests.get(auth_url + '/user',
-                         headers=headers)
+                        headers=headers)
     return resp.text, resp.status_code
 
 
@@ -67,10 +68,11 @@ def login_required(f):
         userinfo = json.loads(response)
         if userinfo['type'] != "org":
             return unsupported_token()
-        auth_context = AuthContext(userinfo['tenant']['id'],userinfo['tenant']['orgs'][0]['id'], userinfo['id'] )
+        auth_context = AuthContext(userinfo['tenant']['id'], userinfo['tenant']['orgs'][0]['id'], userinfo['id'])
         kwargs['authcontext'] = {
             'context': auth_context
         }
 
         return f(*args, **kwargs)
+
     return decorated_function

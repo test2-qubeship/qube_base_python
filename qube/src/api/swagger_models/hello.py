@@ -1,5 +1,6 @@
 from flask_restful_swagger_2 import Schema
 
+
 class HelloModel(Schema):
     type = 'object'
     properties = {
@@ -12,20 +13,20 @@ class HelloModel(Schema):
         'desc': {
             'type': 'string'
         },
-        'tenantId':{
-            'type':'string'
+        'tenantId': {
+            'type': 'string'
         },
-        'orgId':{
-            'type':'string'
+        'orgId': {
+            'type': 'string'
         },
-        'createdBy':{
-            'type':'string'
+        'createdBy': {
+            'type': 'string'
         },
-        'createdDate':{
-            'type':'string'
+        'createdDate': {
+            'type': 'string'
         },
-        'modifiedBy':{
-            'type':'string'
+        'modifiedBy': {
+            'type': 'string'
         },
         'modifiedDate': {
             'type': 'string'
@@ -58,6 +59,7 @@ class HelloModelPut(Schema):
         }
     }
 
+
 class HelloModelPostResponse(Schema):
     type = 'object'
     properties = {
@@ -65,6 +67,7 @@ class HelloModelPostResponse(Schema):
             'type': 'string'
         }
     }
+
 
 class HelloErrorModel(Schema):
     type = 'object'
@@ -74,7 +77,6 @@ class HelloErrorModel(Schema):
         },
         'error_message': {
             'type': 'string'
-        }        
+        }
     }
     required = ['name']
-    

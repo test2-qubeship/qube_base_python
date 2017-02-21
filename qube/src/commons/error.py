@@ -3,12 +3,12 @@ from enum import Enum
 
 class HelloServiceError(Exception):
     def __init__(self, message, errors):
-
         # Call the base class constructor with the parameters it needs
         super(HelloServiceError, self).__init__(message)
 
         # Now for your custom code...
         self.errors = errors
+
 
 class ErrorCodes(Enum):
     NOT_FOUND = 404

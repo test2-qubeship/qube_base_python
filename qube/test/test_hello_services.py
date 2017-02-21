@@ -2,22 +2,20 @@
 """
 Add docstring here
 """
+import os
+import time
 import unittest
+
 import mock
 import mongomock
 from mock import patch
-import json
-import time
-import os
 
 with patch('pymongo.mongo_client.MongoClient', new=mongomock.MongoClient):
-    os.environ['MONGOALCHEMY_CONNECTION_STRING'] =  ''
-    os.environ['MONGOALCHEMY_SERVER'] =  ''
-    os.environ['MONGOALCHEMY_PORT'] =  ''
-    os.environ['MONGOALCHEMY_DATABASE'] =  ''
+    os.environ['MONGOALCHEMY_CONNECTION_STRING'] = ''
+    os.environ['MONGOALCHEMY_SERVER'] = ''
+    os.environ['MONGOALCHEMY_PORT'] = ''
+    os.environ['MONGOALCHEMY_DATABASE'] = ''
 
-    from qube.src.api import app # import app.py
-    import qube.src.api.app      # import app from module (__init__)
     from qube.src.models.hello import Hello
     from qube.src.services.helloservice import HelloService
     from qube.src.commons.context import AuthContext
@@ -27,12 +25,11 @@ with patch('pymongo.mongo_client.MongoClient', new=mongomock.MongoClient):
 class TestHelloService(unittest.TestCase):
     @mock.patch('pymongo.mongo_client.MongoClient', new=mongomock.MongoClient)
     def setUp(self):
-        context = AuthContext("23432523452345","987656789765670","1009009009988")
+        context = AuthContext("23432523452345", "987656789765670", "1009009009988")
         self.helloService = HelloService(context)
         self.hello_data = self.setupDatabaseRecords()
         self.hello_api_model = self.createTestModelData()
         self.hello_api_model_put_description = self.createTestModelDataDescription()
-
 
     def tearDown(self):
         with patch('mongomock.write_concern.WriteConcern.__init__', return_value=None):
@@ -58,52 +55,50 @@ class TestHelloService(unittest.TestCase):
             hello_data.save()
             return hello_data
 
-    @patch('mongomock.write_concern.WriteConcern.__init__',return_value=None)
-    def test_post_hello(self,*args,**kwargs):
+    @patch('mongomock.write_concern.WriteConcern.__init__', return_value=None)
+    def test_post_hello(self, *args, **kwargs):
         result = self.helloService.save_hello(self.hello_api_model)
         self.assertTrue(result['id'] is not None)
-        self.assertTrue(result['name'] == self.hello_api_model['name'] )
+        self.assertTrue(result['name'] == self.hello_api_model['name'])
         Hello.query.get(result['id']).remove()
 
-    @patch('mongomock.write_concern.WriteConcern.__init__',return_value=None)
-    def test_put_hello(self,*args,**kwargs):
-        self.hello_api_model['name'] == 'modified for put'
+    @patch('mongomock.write_concern.WriteConcern.__init__', return_value=None)
+    def test_put_hello(self, *args, **kwargs):
+        self.hello_api_model['name'] = 'modified for put'
         id_to_find = str(self.hello_data.mongo_id)
-        result = self.helloService.update_hello(self.hello_api_model,id_to_find)
+        result = self.helloService.update_hello(self.hello_api_model, id_to_find)
         self.assertTrue(result['id'] == str(id_to_find))
-        self.assertTrue(result['name'] == self.hello_api_model['name'] )
+        self.assertTrue(result['name'] == self.hello_api_model['name'])
 
-
-    @patch('mongomock.write_concern.WriteConcern.__init__',return_value=None)
-    def test_put_hello_description(self,*args,**kwargs):
-        self.hello_api_model_put_description['desc'] == 'modified for put'
+    @patch('mongomock.write_concern.WriteConcern.__init__', return_value=None)
+    def test_put_hello_description(self, *args, **kwargs):
+        self.hello_api_model_put_description['desc'] = 'modified for put'
         id_to_find = str(self.hello_data.mongo_id)
-        result = self.helloService.update_hello(self.hello_api_model_put_description,id_to_find)
+        result = self.helloService.update_hello(self.hello_api_model_put_description, id_to_find)
         self.assertTrue(result['id'] == str(id_to_find))
-        self.assertTrue(result['desc'] == self.hello_api_model_put_description['desc'] )
+        self.assertTrue(result['desc'] == self.hello_api_model_put_description['desc'])
 
-    @patch('mongomock.write_concern.WriteConcern.__init__',return_value=None)
-    def test_get_hello_item(self,*args,**kwargs):
+    @patch('mongomock.write_concern.WriteConcern.__init__', return_value=None)
+    def test_get_hello_item(self, *args, **kwargs):
         id_to_find = str(self.hello_data.mongo_id)
         result = self.helloService.find_hello_by_id(id_to_find)
         self.assertTrue(result['id'] == str(id_to_find))
 
-    @patch('mongomock.write_concern.WriteConcern.__init__',return_value=None)
-    def test_delete_hello_item(self,*args,**kwargs):
+    @patch('mongomock.write_concern.WriteConcern.__init__', return_value=None)
+    def test_delete_hello_item(self, *args, **kwargs):
         id_to_delete = str(self.hello_data.mongo_id)
-        result = self.helloService.delete_hello(id_to_delete)
+        self.helloService.delete_hello(id_to_delete)
         with self.assertRaises(HelloServiceError):
-            result = self.helloService.find_hello_by_id(id_to_delete)
+            self.helloService.find_hello_by_id(id_to_delete)
 
-    @patch('mongomock.write_concern.WriteConcern.__init__',return_value=None)
-    def test_get_hello_item_invalid(self,*args,**kwargs):
+    @patch('mongomock.write_concern.WriteConcern.__init__', return_value=None)
+    def test_get_hello_item_invalid(self, *args, **kwargs):
         id_to_find = '123notexist'
         with self.assertRaises(HelloServiceError):
-            result = self.helloService.find_hello_by_id(id_to_find)
+            self.helloService.find_hello_by_id(id_to_find)
 
-
-    @patch('mongomock.write_concern.WriteConcern.__init__',return_value=None)
-    def test_get_hello_list(self,*args,**kwargs):
+    @patch('mongomock.write_concern.WriteConcern.__init__', return_value=None)
+    def test_get_hello_list(self, *args, **kwargs):
         result_collection = self.helloService.get_all_hellos()
         self.assertTrue(len(result_collection) == 1)
-        self.assertTrue(result_collection[0]['id']== str(self.hello_data.mongo_id))
+        self.assertTrue(result_collection[0]['id'] == str(self.hello_data.mongo_id))

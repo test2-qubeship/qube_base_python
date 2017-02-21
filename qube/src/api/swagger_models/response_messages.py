@@ -1,5 +1,6 @@
 from flask_restful_swagger_2 import Schema
-from qube.src.api.swagger_models.hello import HelloModel, HelloModelPost, HelloErrorModel,HelloModelPostResponse
+
+from qube.src.api.swagger_models.hello import HelloModel, HelloErrorModel, HelloModelPostResponse
 
 """
 the common response messages printed in swagger UI
@@ -11,17 +12,17 @@ post_response_msgs = {
         'schema': HelloModelPostResponse
     },
     '401': {
-        'description': 'Unauthorized'    
+        'description': 'Unauthorized'
     },
     '400': {
-        'description': 'Bad Request'     
+        'description': 'Bad Request'
     },
     '404': {
-        'description': 'Not found'       
+        'description': 'Not found'
     },
     '500': {
         'description': 'Internal server error',
-        'schema': HelloErrorModel        
+        'schema': HelloErrorModel
     }
 }
 
@@ -34,14 +35,14 @@ get_response_msgs = {
         'description': 'Unauthorized'
     },
     '400': {
-        'description': 'Bad Request'     
+        'description': 'Bad Request'
     },
     '404': {
         'description': 'Not found'
     },
     '500': {
         'description': 'Internal server error',
-        'schema': HelloErrorModel        
+        'schema': HelloErrorModel
     }
 }
 
@@ -83,7 +84,6 @@ del_response_msgs = {
     }
 }
 
-
 response_msgs = {
     '200': {
         'description': 'OK'
@@ -101,7 +101,6 @@ response_msgs = {
         'description': 'Internal server error'
     }
 }
-
 
 
 class ErrorModel(Schema):

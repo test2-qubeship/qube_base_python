@@ -14,7 +14,7 @@ header_ex = {
 path_ex = {
     "type": "string",
     "description": "This is the part of the URL",
-    "name": "id",
+    "name": "entity_id",
     "in": "path",
     "required": True
 }
@@ -25,7 +25,7 @@ query_ex = {
     "name": "sth",
     "in": "query",
     "required": True
-    #"required": False
+    # "required": False
 }
 
 body_ex = {
@@ -51,4 +51,3 @@ body_put_ex = {
     'schema': HelloModelPost,
     'required': True,
 }
-

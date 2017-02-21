@@ -1,17 +1,17 @@
 from qube.src.models.hello import Hello
-from qube.src.commons.error import ErrorCodes,HelloServiceError
+from qube.src.commons.error import ErrorCodes, HelloServiceError
 from qube.src.commons.utils import clean_nonserializable_attributes
 import time
 
 
-class HelloService():
-    def __init__(self,context):
+class HelloService:
+    def __init__(self, context):
         self.auth_context = context
 
-    def find_hello_by_id(self,id):
-        data = Hello.query.get(id)  # filter with id not working, unable to proceed with tenant filter
+    def find_hello_by_id(self, entity_id):
+        data = Hello.query.get(entity_id)  # filter with id not working, unable to proceed with tenant filter
         if data is None:
-            raise HelloServiceError('hello '+id+' not found',ErrorCodes.NOT_FOUND)
+            raise HelloServiceError('hello ' + entity_id + ' not found', ErrorCodes.NOT_FOUND)
 
         hello_data = data.wrap()
         clean_nonserializable_attributes(hello_data)
@@ -26,8 +26,8 @@ class HelloService():
             hello_list.append(hello_data)
         return hello_list
 
-    def save_hello(self,hello_model):
-        new_hello = Hello();
+    def save_hello(self, hello_model):
+        new_hello = Hello()
         for key in hello_model:
             new_hello.__setattr__(key, hello_model[key])
         hello_data = new_hello
@@ -43,11 +43,11 @@ class HelloService():
         clean_nonserializable_attributes(hello_result)
         return hello_result
 
-    def update_hello(self,hello_model,id):
+    def update_hello(self, hello_model, entity_id):
 
-        hello_record = Hello.query.get(id)  # Hello is a mongo class
+        hello_record = Hello.query.get(entity_id)  # Hello is a mongo class
         if hello_record is None:
-            raise HelloServiceError('hello ' + id + ' not found', ErrorCodes.NOT_FOUND)
+            raise HelloServiceError('hello ' + entity_id + ' not found', ErrorCodes.NOT_FOUND)
 
         for key in hello_model:
             hello_record.__setattr__(key, hello_model[key])
@@ -58,8 +58,8 @@ class HelloService():
         clean_nonserializable_attributes(hello_result)
         return hello_result
 
-    def delete_hello(self,id):
-        hello = Hello.query.get(id)
+    def delete_hello(self, entity_id):
+        hello = Hello.query.get(entity_id)
         if hello is None:
-            raise HelloServiceError('hello ' + id + ' not found', ErrorCodes.NOT_FOUND)
+            raise HelloServiceError('hello ' + entity_id + ' not found', ErrorCodes.NOT_FOUND)
         hello.remove()

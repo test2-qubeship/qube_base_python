@@ -2,54 +2,53 @@
 """
 Add docstring here
 """
+
 from logging.config import fileConfig
 import os
 
-from flask import Flask
-
-from flask_restful_swagger_2 import Api,get_swagger_blueprint,swagger
+from flask_restful_swagger_2 import Api, swagger
 from flask_swagger_ui import get_swaggerui_blueprint
-
-
 from pkg_resources import resource_filename
-from qube.src.api.helloworld import *
-from qube.src.commons.log import Log as LOG
+
 from qube.src.api import app
+from qube.src.api.helloworld import HelloItemResource, HelloWorld
+from qube.src.commons.log import Log as LOG
 
 logging_config = resource_filename(
     'qube.src.resources', 'logging_config.ini')
 fileConfig(logging_config)
 
 
-
-
+# noinspection PyUnusedLocal,PyUnusedLocal,PyUnusedLocal
 def auth(api_key, endpoint, method):
-    # Space for your fancy authentication. Return True if access is granted, otherwise False
+    """
+    Space for your fancy authentication. Return True if access is granted,
+    otherwise False
+    """
     return True
 
 
 swagger.auth = auth
 
-API_URL = '/specs' # Our API url (can of course be a local resource)
+API_URL = '/specs'  # Our API url (can of course be a local resource)
 
-#api = Api(app, api_version='0.1', api_spec_url=API_URL)
+# api = Api(app, api_version='0.1', api_spec_url=API_URL)
 api = Api(app, api_version='0.1', api_spec_url=API_URL)
 
-DEFAULT_HOST = os.getenv('DEFAULT_LISTENER_HOST','localhost')
+DEFAULT_HOST = os.getenv('DEFAULT_LISTENER_HOST', 'localhost')
 DEFAULT_PORT = int(os.environ.get('DEFAULT_LISTENER_PORT', '5000'))
 DEBUG = os.environ.get('DEBUG', 'False') \
-    in ("yes", "y", "true", "True", "t", "1")
+        in ("yes", "y", "true", "True", "t", "1")
 
-
-SWAGGER_URL = '/api/docs' # URL for exposing Swagger UI (without trailing '/')
+SWAGGER_URL = '/api/docs'  # URL for exposing Swagger UI (without trailing '/')
 
 # Call factory function to create our blueprint
 swaggerui_blueprint = get_swaggerui_blueprint(
-  SWAGGER_URL, # Swagger UI static files will be mapped to '{SWAGGER_URL}/dist/'
-  API_URL+".json",
-  #config={ # Swagger UI config overrides
-  #'supportedSubmitMethods': ['get']
-  #}
+    SWAGGER_URL, # Swagger UI static files will be mapped to '{SWAGGER_URL}/dist/'
+    API_URL + ".json",
+    # config={ # Swagger UI config overrides
+    # 'supportedSubmitMethods': ['get']
+    # }
 )
 """
 docs = []
@@ -62,7 +61,7 @@ docs.append(api.get_swagger_doc())
 app.register_blueprint(swaggerui_blueprint, url_prefix=SWAGGER_URL)
 
 api.add_resource(HelloWorld, '/hello')
-api.add_resource(HelloItemResource, '/hello/<string:id>')
+api.add_resource(HelloItemResource, '/hello/<string:entity_id>')
 
 
 def main():
