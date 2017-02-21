@@ -44,7 +44,8 @@ SWAGGER_URL = '/api/docs'  # URL for exposing Swagger UI (without trailing '/')
 
 # Call factory function to create our blueprint
 swaggerui_blueprint = get_swaggerui_blueprint(
-    SWAGGER_URL, # Swagger UI static files will be mapped to '{SWAGGER_URL}/dist/'
+    # Swagger UI static files will be mapped to '{SWAGGER_URL}/dist/'
+    SWAGGER_URL,
     API_URL + ".json",
     # config={ # Swagger UI config overrides
     # 'supportedSubmitMethods': ['get']
@@ -56,7 +57,8 @@ docs = []
 docs.append(api.get_swagger_doc())
 # Register blueprint at URL
 # (URL must match the one given to factory function above)
-#app.register_blueprint(get_swagger_blueprint(docs, API_URL+'.json', title='Example', api_version='0.1'))
+#app.register_blueprint(get_swagger_blueprint
+(docs, API_URL+'.json', title='Example', api_version='0.1'))
 """
 app.register_blueprint(swaggerui_blueprint, url_prefix=SWAGGER_URL)
 

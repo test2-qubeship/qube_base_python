@@ -13,3 +13,4 @@ magicmock==0.03
 requests
 enum==0.4.6
 pytest-cov==2.4.0
+pep8

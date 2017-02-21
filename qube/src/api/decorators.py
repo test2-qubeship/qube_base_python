@@ -68,7 +68,9 @@ def login_required(f):
         userinfo = json.loads(response)
         if userinfo['type'] != "org":
             return unsupported_token()
-        auth_context = AuthContext(userinfo['tenant']['id'], userinfo['tenant']['orgs'][0]['id'], userinfo['id'])
+        auth_context = AuthContext(userinfo['tenant']['id'],
+                                   userinfo['tenant']['orgs'][0]['id'],
+                                   userinfo['id'])
         kwargs['authcontext'] = {
             'context': auth_context
         }
