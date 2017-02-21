@@ -8,7 +8,7 @@ class HelloService:
     def __init__(self, context):
         self.auth_context = context
 
-    def find_hello_by_id(self, entity_id):
+    def find_by_id(self, entity_id):
         # filter with id not working,
         # unable to proceed with tenant filter
         data = Hello.query.get(entity_id)
@@ -21,7 +21,7 @@ class HelloService:
         clean_nonserializable_attributes(hello_data)
         return hello_data
 
-    def get_all_hellos(self):
+    def get_all(self):
         hello_list = []
         data = Hello.query.filter(Hello.tenantId ==
                                   self.auth_context.tenant_id)
@@ -31,7 +31,7 @@ class HelloService:
             hello_list.append(hello_data)
         return hello_list
 
-    def save_hello(self, hello_model):
+    def save(self, hello_model):
         new_hello = Hello()
         for key in hello_model:
             new_hello.__setattr__(key, hello_model[key])
@@ -48,7 +48,7 @@ class HelloService:
         clean_nonserializable_attributes(hello_result)
         return hello_result
 
-    def update_hello(self, hello_model, entity_id):
+    def update(self, hello_model, entity_id):
 
         hello_record = Hello.query.get(entity_id)  # Hello is a mongo class
         if hello_record is None:
@@ -64,7 +64,7 @@ class HelloService:
         clean_nonserializable_attributes(hello_result)
         return hello_result
 
-    def delete_hello(self, entity_id):
+    def delete(self, entity_id):
         hello = Hello.query.get(entity_id)
         if hello is None:
             raise HelloServiceError('hello ' + entity_id +

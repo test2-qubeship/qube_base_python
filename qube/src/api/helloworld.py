@@ -19,12 +19,11 @@ from qube.src.commons.utils import clean_nonserializable_attributes
 from qube.src.services.helloservice import HelloService
 
 EMPTY = ''
-
-hello_item_get_params = [header_ex, path_ex, query_ex]
-hello_item_put_params = [header_ex, path_ex, body_put_ex]
-hello_item_delete_params = [header_ex, path_ex]
-hello_get_params = [header_ex]
-hello_post_params = [header_ex, body_post_ex]
+get_details_params = [header_ex, path_ex, query_ex]
+put_params = [header_ex, path_ex, body_put_ex]
+delete_params = [header_ex, path_ex]
+get_params = [header_ex]
+post_params = [header_ex, body_post_ex]
 
 
 class HelloItemResource(Resource):
@@ -32,7 +31,7 @@ class HelloItemResource(Resource):
         {
             'tags': ['Hello World'],
             'description': 'hello world get operation',
-            'parameters': hello_item_get_params,
+            'parameters': get_details_params,
             'responses': get_response_msgs
         }
     )
@@ -41,9 +40,9 @@ class HelloItemResource(Resource):
         """gets an hello item that omar has changed
         """
         try:
-            LOG.debug("hello world")
+            LOG.debug("Get details by id %s ",entity_id)
             hello_data = HelloService(authcontext['context'])\
-                .find_hello_by_id(entity_id)
+                .find_by_id(entity_id)
             clean_nonserializable_attributes(hello_data)
         except HelloServiceError as e:
             LOG.error(e)
@@ -57,7 +56,7 @@ class HelloItemResource(Resource):
         {
             'tags': ['Hello World'],
             'description': 'hello world put operation',
-            'parameters': hello_item_put_params,
+            'parameters': put_params,
             'responses': put_response_msgs
         }
     )
@@ -69,7 +68,7 @@ class HelloItemResource(Resource):
         try:
             hello_model = HelloModelPut(**request.get_json())
             context = authcontext['context']
-            HelloService(context).update_hello(hello_model, entity_id)
+            HelloService(context).update(hello_model, entity_id)
             return EMPTY, 204
         except HelloServiceError as e:
             LOG.error(e)
@@ -85,7 +84,7 @@ class HelloItemResource(Resource):
         {
             'tags': ['Hello World'],
             'description': 'hello world delete operation',
-            'parameters': hello_item_delete_params,
+            'parameters': delete_params,
             'responses': del_response_msgs
         }
     )
@@ -95,7 +94,7 @@ class HelloItemResource(Resource):
         Delete hello item
         """
         try:
-            HelloService(authcontext['context']).delete_hello(entity_id)
+            HelloService(authcontext['context']).delete(entity_id)
             return EMPTY, 204
         except HelloServiceError as e:
             LOG.error(e)
@@ -113,7 +112,7 @@ class HelloWorld(Resource):
         {
             'tags': ['Hello World'],
             'description': 'hello world get operation',
-            'parameters': hello_get_params,
+            'parameters': get_params,
             'responses': get_response_msgs
         }
     )
@@ -123,7 +122,7 @@ class HelloWorld(Resource):
         gets all hello items
         """
         LOG.debug("Serving  Get all request")
-        hello_list = HelloService(authcontext['context']).get_all_hellos()
+        hello_list = HelloService(authcontext['context']).get_all()
         # normalize the name for 'id'
         return hello_list, 200
 
@@ -131,7 +130,7 @@ class HelloWorld(Resource):
         {
             'tags': ['Hello World'],
             'description': 'hello world create operation',
-            'parameters': hello_post_params,
+            'parameters': post_params,
             'responses': post_response_msgs
         }
     )
@@ -143,7 +142,7 @@ class HelloWorld(Resource):
         try:
             hello_model = HelloModelPost(**request.get_json())
             hello_result = HelloService(authcontext['context'])\
-                .save_hello(hello_model)
+                .save(hello_model)
 
             response = HelloModelPostResponse()
             for key in response.properties:

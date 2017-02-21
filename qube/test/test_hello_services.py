@@ -61,7 +61,7 @@ class TestHelloService(unittest.TestCase):
 
     @patch('mongomock.write_concern.WriteConcern.__init__', return_value=None)
     def test_post_hello(self, *args, **kwargs):
-        result = self.helloService.save_hello(self.hello_api_model)
+        result = self.helloService.save(self.hello_api_model)
         self.assertTrue(result['id'] is not None)
         self.assertTrue(result['name'] == self.hello_api_model['name'])
         Hello.query.get(result['id']).remove()
@@ -70,7 +70,7 @@ class TestHelloService(unittest.TestCase):
     def test_put_hello(self, *args, **kwargs):
         self.hello_api_model['name'] = 'modified for put'
         id_to_find = str(self.hello_data.mongo_id)
-        result = self.helloService.update_hello(self.hello_api_model,
+        result = self.helloService.update(self.hello_api_model,
                                                 id_to_find)
         self.assertTrue(result['id'] == str(id_to_find))
         self.assertTrue(result['name'] == self.hello_api_model['name'])
@@ -79,7 +79,7 @@ class TestHelloService(unittest.TestCase):
     def test_put_hello_description(self, *args, **kwargs):
         self.hello_api_model_put_description['desc'] = 'modified for put'
         id_to_find = str(self.hello_data.mongo_id)
-        result = self.helloService.update_hello(
+        result = self.helloService.update(
             self.hello_api_model_put_description, id_to_find)
         self.assertTrue(result['id'] == str(id_to_find))
         self.assertTrue(result['desc'] ==
@@ -88,25 +88,25 @@ class TestHelloService(unittest.TestCase):
     @patch('mongomock.write_concern.WriteConcern.__init__', return_value=None)
     def test_get_hello_item(self, *args, **kwargs):
         id_to_find = str(self.hello_data.mongo_id)
-        result = self.helloService.find_hello_by_id(id_to_find)
+        result = self.helloService.find_by_id(id_to_find)
         self.assertTrue(result['id'] == str(id_to_find))
 
     @patch('mongomock.write_concern.WriteConcern.__init__', return_value=None)
     def test_delete_hello_item(self, *args, **kwargs):
         id_to_delete = str(self.hello_data.mongo_id)
-        self.helloService.delete_hello(id_to_delete)
+        self.helloService.delete(id_to_delete)
         with self.assertRaises(HelloServiceError):
-            self.helloService.find_hello_by_id(id_to_delete)
+            self.helloService.find_by_id(id_to_delete)
 
     @patch('mongomock.write_concern.WriteConcern.__init__', return_value=None)
     def test_get_hello_item_invalid(self, *args, **kwargs):
         id_to_find = '123notexist'
         with self.assertRaises(HelloServiceError):
-            self.helloService.find_hello_by_id(id_to_find)
+            self.helloService.find_by_id(id_to_find)
 
     @patch('mongomock.write_concern.WriteConcern.__init__', return_value=None)
     def test_get_hello_list(self, *args, **kwargs):
-        result_collection = self.helloService.get_all_hellos()
+        result_collection = self.helloService.get_all()
         self.assertTrue(len(result_collection) == 1)
         self.assertTrue(result_collection[0]['id'] ==
                         str(self.hello_data.mongo_id))

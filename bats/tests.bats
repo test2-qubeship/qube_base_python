@@ -7,7 +7,7 @@ data='{
 
 #TOKEN="valueDoesnotMatter"
 APIHOST="localhost"
-DEFAULT_LISTENER_PORT="3333"
+DEFAULT_LISTENER_PORT="8000"
 
 create_sample_data() {
   id=$(curl -H "Authorization: Bearer $TOKEN" -X POST -H "Content-Type: application/json"  -d "${data}" "$URLPATH" | jq '.id' | sed 's/\"//g')
