@@ -7,7 +7,7 @@ import os
 from flask import request, Response
 import requests
 
-
+from  qube.src.commons.context import AuthContext
 auth_url = os.getenv('QUBESHIP_AUTH_URL','https://api.qubeship.io/v1/auth')
 
 
@@ -67,11 +67,9 @@ def login_required(f):
         userinfo = json.loads(response)
         if userinfo['type'] != "org":
             return unsupported_token()
-
+        auth_context = AuthContext(userinfo['tenant']['id'],userinfo['tenant']['orgs'][0]['id'], userinfo['id'] )
         kwargs['authcontext'] = {
-            'userId': userinfo['id'],
-            'orgId': userinfo['tenant']['orgs'][0]['id'],
-            'tenantId':userinfo['tenant']['id']
+            'context': auth_context
         }
 
         return f(*args, **kwargs)

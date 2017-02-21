@@ -21,6 +21,7 @@ from qube.src.commons.error import HelloServiceError
 import json
 import time
 from mongoalchemy.exceptions import DocumentException, MissingValueException, ExtraValueException, FieldNotRetrieved, BadFieldSpecification
+from qube.src.commons.context import  AuthContext
 
 
 hello_item_get_params = [header_ex, path_ex, query_ex]
@@ -46,7 +47,7 @@ class HelloItemResource(Resource):
         """
         try:
             LOG.debug("hello world")
-            hello_data = HelloService().find_hello_by_id(id)
+            hello_data = HelloService(authcontext['context']).find_hello_by_id(id)
             clean_nonserializable_attributes(hello_data)
         except HelloServiceError as e:
             LOG.error(e)
@@ -71,9 +72,8 @@ class HelloItemResource(Resource):
         """
         try:
             hello_model = HelloModelPut(**request.get_json())
-            user_id = authcontext['userId']
-            tenant_id = authcontext['tenantId']
-            HelloService().update_hello(hello_model,tenant_id,user_id,id)
+            context = authcontext['context']
+            HelloService(context).update_hello(hello_model,id)
             return '', 204
         except HelloServiceError as e:
             LOG.error(e)
@@ -99,7 +99,7 @@ class HelloItemResource(Resource):
         Delete hello item
         """
         try:
-            HelloService().delete_hello(authcontext['tenantId'],id)
+            HelloService(authcontext['context']).delete_hello(id)
             return '', 204
         except HelloServiceError as e:
             LOG.error(e)
@@ -126,7 +126,7 @@ class HelloWorld(Resource):
         gets all hello items
         """
         LOG.debug("Serving  Get all request")
-        hello_list = HelloService().get_all_hellos(authcontext['tenantId'])
+        hello_list = HelloService(authcontext['context']).get_all_hellos()
         #normalize the name for 'id'
         return hello_list, 200
     
@@ -147,10 +147,12 @@ class HelloWorld(Resource):
         hello_data = None
         try:
             hello_model = HelloModelPost(**request.get_json())
-            tenant_id = authcontext['tenantId']
-            org_id = authcontext['tenantId']
-            user_id = authcontext['userId']
-            hello_result = HelloService().save_hello(hello_model,tenant_id,org_id,user_id)
+            #tenant_id = authcontext['tenantId']
+            #org_id = authcontext['tenantId']
+            #user_id = authcontext['userId']
+            #hello_result = HelloService().save_hello(hello_model,tenant_id,org_id,user_id)
+            hello_result = HelloService(authcontext['context']).save_hello(hello_model)
+
             response = HelloModelPostResponse()
             for key in response.properties:
                 response[key] = hello_result[key]

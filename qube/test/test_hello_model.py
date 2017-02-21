@@ -26,8 +26,8 @@ class TestHelloModel(unittest.TestCase):
         hello_data.modifiedDate = str(int(time.time()))
         with patch('mongomock.write_concern.WriteConcern.__init__',return_value=None):
             hello_data.save()
-        
-        self.assertIsNotNone(hello_data.mongo_id)
+            self.assertIsNotNone(hello_data.mongo_id)
+            hello_data.remove()
 
     @classmethod
     def tearDownClass(cls):
