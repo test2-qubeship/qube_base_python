@@ -42,7 +42,8 @@ class HelloItemResource(Resource):
         """
         try:
             LOG.debug("hello world")
-            hello_data = HelloService(authcontext['context']).find_hello_by_id(entity_id)
+            hello_data = HelloService(authcontext['context'])\
+                .find_hello_by_id(entity_id)
             clean_nonserializable_attributes(hello_data)
         except HelloServiceError as e:
             LOG.error(e)
@@ -141,23 +142,22 @@ class HelloWorld(Resource):
         """
         try:
             hello_model = HelloModelPost(**request.get_json())
-            # tenant_id = authcontext['tenantId']
-            # org_id = authcontext['tenantId']
-            # user_id = authcontext['userId']
-            # hello_result = HelloService().save_hello(hello_model,tenant_id,org_id,user_id)
-            hello_result = HelloService(authcontext['context']).save_hello(hello_model)
+            hello_result = HelloService(authcontext['context'])\
+                .save_hello(hello_model)
 
             response = HelloModelPostResponse()
             for key in response.properties:
                 response[key] = hello_result[key]
 
-            return response, 201, {'Location': request.path + '/' + str(response['id'])}
+            return (response, 201,
+                    {'Location': request.path + '/' + str(response['id'])})
         except ValueError as e:
             LOG.error(e)
             return ErrorModel(**{'message': e.args[0]}), 400
         except ExtraValueException as e:
             LOG.error(e)
-            return ErrorModel(**{'message': "{} is not valid input".format(e.args[0])}), 400
+            return ErrorModel(**{'message': "{} is not valid input".
+                              format(e.args[0])}), 400
         except Exception as ex:
             LOG.error(ex)
             return ErrorModel(**{'message': ex.args[0]}), 500

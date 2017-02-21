@@ -50,11 +50,14 @@ def configure(level, logfile=None, with_time=False):
     # otherwise, use StreamHandler to output to stream (stdout, stderr...)
     else:
         if with_time:
-            log_format = "%(log_color)s%(levelname)s:%(module)s-%(name)s-%(funcName)s:%(reset)s %(asctime)s %(message)s"
+            log_format = ("%(log_color)s%(levelname)s:%(module)s-%(name)s-"
+                          "%(funcName)s:%(reset)s %(asctime)s %(message)s")
         else:
-            log_format = "%(log_color)s%(levelname)s:%(module)s-%(name)s-%(funcName)s:%(reset)s %(message)s"
+            log_format = ("%(log_color)s%(levelname)s:%(module)s-"
+                          "%(name)s-%(funcName)s:%(reset)s %(message)s")
         # pylint: disable=redefined-variable-type
-        formatter = colorlog.ColoredFormatter(fmt=log_format, datefmt=date_format)
+        formatter = colorlog.ColoredFormatter(fmt=log_format,
+                                              datefmt=date_format)
         stream_handler = logging.StreamHandler()
         stream_handler.setFormatter(formatter)
         Log.addHandler(stream_handler)
@@ -63,8 +66,8 @@ def configure(level, logfile=None, with_time=False):
 def init_rotating_logger(level, logfile, max_files, max_bytes):
     """Initializes a rotating logger
 
-  It also makes sure that any StreamHandler is removed, so as to avoid stdout/stderr
-  constipation issues
+    It also makes sure that any StreamHandler is removed,
+    so as to avoid stdout/stderr constipation issues
   """
     logging.basicConfig()
 
@@ -72,8 +75,10 @@ def init_rotating_logger(level, logfile, max_files, max_bytes):
     log_format = "%(asctime)s:%(levelname)s:%(filename)s: %(message)s"
 
     root_logger.setLevel(level)
-    handler = RotatingFileHandler(logfile, maxBytes=max_bytes, backupCount=max_files)
-    handler.setFormatter(logging.Formatter(fmt=log_format, datefmt=date_format))
+    handler = RotatingFileHandler(logfile, maxBytes=max_bytes,
+                                  backupCount=max_files)
+    handler.setFormatter(logging.Formatter(fmt=log_format,
+                                           datefmt=date_format))
     root_logger.addHandler(handler)
 
     for handler in root_logger.handlers:

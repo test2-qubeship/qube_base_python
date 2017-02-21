@@ -25,14 +25,17 @@ with patch('pymongo.mongo_client.MongoClient', new=mongomock.MongoClient):
 class TestHelloService(unittest.TestCase):
     @mock.patch('pymongo.mongo_client.MongoClient', new=mongomock.MongoClient)
     def setUp(self):
-        context = AuthContext("23432523452345", "987656789765670", "1009009009988")
+        context = AuthContext("23432523452345", "987656789765670",
+                                                "1009009009988")
         self.helloService = HelloService(context)
         self.hello_data = self.setupDatabaseRecords()
         self.hello_api_model = self.createTestModelData()
-        self.hello_api_model_put_description = self.createTestModelDataDescription()
+        self.hello_api_model_put_description \
+            = self.createTestModelDataDescription()
 
     def tearDown(self):
-        with patch('mongomock.write_concern.WriteConcern.__init__', return_value=None):
+        with patch('mongomock.write_concern.WriteConcern.__init__',
+                   return_value=None):
             self.hello_data.remove()
 
     def createTestModelData(self):
@@ -43,7 +46,8 @@ class TestHelloService(unittest.TestCase):
 
     @mock.patch('pymongo.mongo_client.MongoClient', new=mongomock.MongoClient)
     def setupDatabaseRecords(self):
-        with patch('mongomock.write_concern.WriteConcern.__init__', return_value=None):
+        with patch('mongomock.write_concern.WriteConcern.__init__',
+                   return_value=None):
             hello_data = Hello(name='test_record')
             hello_data.desc = 'my short description'
             hello_data.tenantId = "23432523452345"
@@ -66,7 +70,8 @@ class TestHelloService(unittest.TestCase):
     def test_put_hello(self, *args, **kwargs):
         self.hello_api_model['name'] = 'modified for put'
         id_to_find = str(self.hello_data.mongo_id)
-        result = self.helloService.update_hello(self.hello_api_model, id_to_find)
+        result = self.helloService.update_hello(self.hello_api_model,
+                                                id_to_find)
         self.assertTrue(result['id'] == str(id_to_find))
         self.assertTrue(result['name'] == self.hello_api_model['name'])
 
@@ -74,9 +79,11 @@ class TestHelloService(unittest.TestCase):
     def test_put_hello_description(self, *args, **kwargs):
         self.hello_api_model_put_description['desc'] = 'modified for put'
         id_to_find = str(self.hello_data.mongo_id)
-        result = self.helloService.update_hello(self.hello_api_model_put_description, id_to_find)
+        result = self.helloService.update_hello(
+            self.hello_api_model_put_description, id_to_find)
         self.assertTrue(result['id'] == str(id_to_find))
-        self.assertTrue(result['desc'] == self.hello_api_model_put_description['desc'])
+        self.assertTrue(result['desc'] ==
+                        self.hello_api_model_put_description['desc'])
 
     @patch('mongomock.write_concern.WriteConcern.__init__', return_value=None)
     def test_get_hello_item(self, *args, **kwargs):
@@ -101,4 +108,5 @@ class TestHelloService(unittest.TestCase):
     def test_get_hello_list(self, *args, **kwargs):
         result_collection = self.helloService.get_all_hellos()
         self.assertTrue(len(result_collection) == 1)
-        self.assertTrue(result_collection[0]['id'] == str(self.hello_data.mongo_id))
+        self.assertTrue(result_collection[0]['id'] ==
+                        str(self.hello_data.mongo_id))
