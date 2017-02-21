@@ -24,7 +24,8 @@ class TestHelloModel(unittest.TestCase):
         hello_data.modifiedBy = "1009009009988"
         hello_data.createDate = str(int(time.time()))
         hello_data.modifiedDate = str(int(time.time()))
-        with patch('mongomock.write_concern.WriteConcern.__init__', return_value=None):
+        with patch('mongomock.write_concern.WriteConcern.__init__',
+                   return_value=None):
             hello_data.save()
             self.assertIsNotNone(hello_data.mongo_id)
             hello_data.remove()
