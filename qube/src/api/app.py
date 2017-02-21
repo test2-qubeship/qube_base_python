@@ -7,7 +7,8 @@ from logging.config import fileConfig
 import os
 
 from flask_restful_swagger_2 import Api, swagger
-from flask_swagger_ui import get_swaggerui_blueprint
+#from flask_swagger_ui import get_swaggerui_blueprint
+from qube.src.api.flask_swagger_ui import get_swaggerui_blueprint
 from pkg_resources import resource_filename
 
 from qube.src.api import app

@@ -18,6 +18,8 @@ from qube.src.commons.log import Log as LOG
 from qube.src.commons.utils import clean_nonserializable_attributes
 from qube.src.services.helloservice import HelloService
 
+EMPTY = ''
+
 hello_item_get_params = [header_ex, path_ex, query_ex]
 hello_item_put_params = [header_ex, path_ex, body_put_ex]
 hello_item_delete_params = [header_ex, path_ex]
@@ -67,7 +69,7 @@ class HelloItemResource(Resource):
             hello_model = HelloModelPut(**request.get_json())
             context = authcontext['context']
             HelloService(context).update_hello(hello_model, entity_id)
-            return '', 204
+            return EMPTY, 204
         except HelloServiceError as e:
             LOG.error(e)
             return ErrorModel(**{'message': e.args[0]}), e.errors
@@ -93,7 +95,7 @@ class HelloItemResource(Resource):
         """
         try:
             HelloService(authcontext['context']).delete_hello(entity_id)
-            return '', 204
+            return EMPTY, 204
         except HelloServiceError as e:
             LOG.error(e)
             return ErrorModel(**{'message': e.args[0]}), e.errors

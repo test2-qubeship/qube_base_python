@@ -6,4 +6,5 @@ Flask-MongoAlchemy==0.7.2
 requests
 flask_cors==3.0.2
 flask-swagger-ui==0.0.2
-enum==0.4.6
+enum==0.4.6; python_version < '3.0'
+werkzeug==0.11.15

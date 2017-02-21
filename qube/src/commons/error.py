@@ -1,5 +1,4 @@
-from enum import Enum
-
+from enum import IntEnum
 
 class HelloServiceError(Exception):
     def __init__(self, message, errors):
@@ -10,7 +9,7 @@ class HelloServiceError(Exception):
         self.errors = errors
 
 
-class ErrorCodes(Enum):
+class ErrorCodes(IntEnum):
     NOT_FOUND = 404
     NOT_ALLOWED = 2
     MISSING_REQUIRED = 400

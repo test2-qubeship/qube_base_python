@@ -103,9 +103,9 @@ class TestHelloController(unittest.TestCase):
     @patch('mongomock.write_concern.WriteConcern.__init__', return_value=None)
     @patch('qube.src.api.decorators.validate_with_qubeship_auth', return_value=(auth_response(), 200))
     def test_post_hello(self, *args, **kwargs):
-        rv = self.test_client.post("/hello", input_stream=io.BytesIO(json.dumps(self.hello_model_data)),
+        ist=io.BytesIO(json.dumps(self.hello_model_data).encode('utf-8'))
+        rv = self.test_client.post("/hello", input_stream=ist,
                                    headers=self.hello_headers)
-        print rv.status
         result = json.loads(rv.data)
 
         self.assertTrue(rv._status_code == 201)
@@ -117,7 +117,7 @@ class TestHelloController(unittest.TestCase):
         entity_id = str(self.hello_data.mongo_id)
         self.hello_model_data['desc'] = 'updated model desc'
         rv = self.test_client.put("/hello/{}".format(entity_id),
-                                  input_stream=io.BytesIO(json.dumps(self.hello_model_data)),
+                                  input_stream=io.BytesIO(json.dumps(self.hello_model_data).encode('utf-8')),
                                   headers=self.hello_headers)
         self.assertTrue(rv._status_code == 204)
         updated_hello_record = Hello.query.get(entity_id)
@@ -126,9 +126,8 @@ class TestHelloController(unittest.TestCase):
     @patch('mongomock.write_concern.WriteConcern.__init__', return_value=None)
     @patch('qube.src.api.decorators.validate_with_qubeship_auth', return_value=(auth_response(), 200))
     def test_put_hello_item_non_found(self, *args, **kwargs):
-        rv = self.test_client.put("/hello/{}".format(1234), input_stream=io.BytesIO(json.dumps(self.hello_model_data)),
+        rv = self.test_client.put("/hello/{}".format(1234), input_stream=io.BytesIO(json.dumps(self.hello_model_data).encode('utf-8')),
                                   headers=self.hello_headers)
-        print rv.status
         self.assertTrue(rv._status_code == 404)
 
     @patch('mongomock.write_concern.WriteConcern.__init__', return_value=None)
@@ -136,7 +135,6 @@ class TestHelloController(unittest.TestCase):
     def test_get_hello(self, *args, **kwargs):
         id_to_get = str(self.hello_data.mongo_id)
         rv = self.test_client.get("/hello", headers=self.hello_headers)
-        print rv.status
         result_collection = json.loads(rv.data)
         self.assertTrue(rv._status_code == 200)
         self.assertTrue(len(result_collection) == 1)
@@ -176,7 +174,6 @@ class TestHelloController(unittest.TestCase):
     @patch('qube.src.api.decorators.validate_with_qubeship_auth', return_value=(no_auth_response(), 401))
     def test_get_hello_not_authorized(self, *args, **kwargs):
         rv = self.test_client.get("/hello", headers=self.hello_headers)
-        print rv.status
         self.assertTrue(rv._status_code == 401)
 
     @patch('mongomock.write_concern.WriteConcern.__init__', return_value=None)
@@ -189,7 +186,6 @@ class TestHelloController(unittest.TestCase):
     @patch('qube.src.api.decorators.validate_with_qubeship_auth', return_value=(no_auth_response(), 401))
     def test_get_hello_no_authorization(self, *args, **kwargs):
         rv = self.test_client.get("/hello", headers=[('Content-Type', 'application/json')])
-        print rv.status
         self.assertTrue(rv._status_code == 401)
 
     @classmethod
