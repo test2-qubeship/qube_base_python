@@ -3,6 +3,7 @@ import json
 import os
 
 from flask import Blueprint, render_template, send_from_directory
+from pkg_resources import resource_filename
 
 
 def get_swaggerui_blueprint(base_url, api_url, config=None):
