@@ -40,8 +40,8 @@ for file in `find . -type f  | grep -v customize.sh| grep -v .whl | grep -v .git
 done
 
 for file in `find . -type f | grep -v .git| grep hello`; do
-    service="{$1,,}"
-    newfile="${file/hello/$service}"
+    lower_service=`echo $service| tr '[:upper:]' '[:lower:]'`
+    newfile="${file/hello/$lower_service}"
     echo "renaming $file to $newfile"
     mv $file $newfile
 done
@@ -53,9 +53,9 @@ for file in `find . -type f  | grep -v customize.sh| grep -v .whl | grep -v .git
 done
 
 for file in `find . -type f  | grep -v customize.sh| grep -v .whl | grep -v .git| xargs grep -Ril hello`; do
-  service="{$1,,}"
-  echo "renaming hello to $service in $file"
-  sed -i".bak" "s/hello/$service/g" $file;
+  lower_service=`echo $service| tr '[:upper:]' '[:lower:]'`
+  echo "renaming hello to $lower_service in $file"
+  sed -i".bak" "s/hello/$lower_service/g" $file;
   rm -rf $file.*bak*
 done
 
