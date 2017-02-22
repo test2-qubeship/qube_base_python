@@ -1,4 +1,5 @@
-from qube.src.api.swagger_models.hello import HelloModel, HelloModelPost
+from qube.src.api.swagger_models.hello \
+    import HelloModel, HelloModelPost
 
 """
 swagger parameters definitions

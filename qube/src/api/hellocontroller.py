@@ -7,10 +7,10 @@ from flask_restful_swagger_2 import Resource, swagger
 from mongoalchemy.exceptions import ExtraValueException
 
 from qube.src.api.decorators import login_required
-from qube.src.api.swagger_models.hello import HelloModel
-from qube.src.api.swagger_models.hello import HelloModelPost
-from qube.src.api.swagger_models.hello import HelloModelPostResponse
-from qube.src.api.swagger_models.hello import HelloModelPut
+from qube.src.api.swagger_models.hello import HelloModel # noqa: ignore=I100
+from qube.src.api.swagger_models.hello import HelloModelPost # noqa: ignore=I100
+from qube.src.api.swagger_models.hello import HelloModelPostResponse # noqa: ignore=I100
+from qube.src.api.swagger_models.hello import HelloModelPut # noqa: ignore=I100
 
 from qube.src.api.swagger_models.parameters import (
     body_post_ex, body_put_ex, header_ex, path_ex, query_ex)

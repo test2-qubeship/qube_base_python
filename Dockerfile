@@ -1,4 +1,4 @@
-FROM python:3.3
+FROM python:3.5
 ADD dist/qube_placeholder*.whl .
 ADD requirements.txt .
 RUN pip install -r requirements.txt
