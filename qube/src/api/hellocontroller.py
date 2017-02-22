@@ -33,8 +33,8 @@ post_params = [header_ex, body_post_ex]
 class ResourceItemController(Resource):
     @swagger.doc(
         {
-            'tags': ['Hello World'],
-            'description': 'hello world get operation',
+            'tags': ['Hello'],
+            'description': 'Hello get operation',
             'parameters': get_details_params,
             'responses': get_response_msgs
         }
@@ -58,8 +58,8 @@ class ResourceItemController(Resource):
 
     @swagger.doc(
         {
-            'tags': ['Hello World'],
-            'description': 'hello world put operation',
+            'tags': ['Hello'],
+            'description': 'Hello put operation',
             'parameters': put_params,
             'responses': put_response_msgs
         }
@@ -86,8 +86,8 @@ class ResourceItemController(Resource):
 
     @swagger.doc(
         {
-            'tags': ['Hello World'],
-            'description': 'hello world delete operation',
+            'tags': ['Hello'],
+            'description': 'Hello delete operation',
             'parameters': delete_params,
             'responses': del_response_msgs
         }
@@ -114,8 +114,8 @@ class ResourceItemController(Resource):
 class ResourceController(Resource):
     @swagger.doc(
         {
-            'tags': ['Hello World'],
-            'description': 'hello world get operation',
+            'tags': ['Hello'],
+            'description': 'Hello get operation',
             'parameters': get_params,
             'responses': get_response_msgs
         }
@@ -132,8 +132,8 @@ class ResourceController(Resource):
 
     @swagger.doc(
         {
-            'tags': ['Hello World'],
-            'description': 'hello world create operation',
+            'tags': ['Hello'],
+            'description': 'Hello create operation',
             'parameters': post_params,
             'responses': post_response_msgs
         }
