@@ -9,7 +9,7 @@ from flask import Flask
 from flask_cors import CORS
 from flask_mongoalchemy import MongoAlchemy
 
-app = Flask(__name__)
+app = Flask('Hello')
 CORS(app)
 app.config['MONGOALCHEMY_CONNECTION_STRING'] = \
     os.getenv('MONGOALCHEMY_CONNECTION_STRING', '')

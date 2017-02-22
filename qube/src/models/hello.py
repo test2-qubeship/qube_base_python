@@ -5,7 +5,7 @@ class Hello(persist_db.Document):
     # Primary ID
     id = persist_db.StringField(required=False)
 
-    # Hello world model data
+    # Hello  model data
     name = persist_db.StringField(required=False)
     desc = persist_db.StringField(required=False)
 
