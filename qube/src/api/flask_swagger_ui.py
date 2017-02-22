@@ -10,7 +10,7 @@ def get_swaggerui_blueprint(base_url, api_url, config=None):
 
     swagger_ui = Blueprint('swagger_ui',
                            __name__,
-                           static_folder=resource_filename('qube.src.resources','dist'),
+                           static_folder=resource_filename('qube.src.resources','assets'),
                            template_folder=resource_filename('qube.src.resources','templates'))
 
     default_config = {
