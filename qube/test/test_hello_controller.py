@@ -8,8 +8,9 @@ import os
 import time
 import unittest
 
-import mongomock
 from mock import patch
+import mongomock
+
 
 # noinspection PyUnresolvedReferences
 with patch('pymongo.mongo_client.MongoClient', new=mongomock.MongoClient):
@@ -17,8 +18,7 @@ with patch('pymongo.mongo_client.MongoClient', new=mongomock.MongoClient):
     os.environ['MONGOALCHEMY_SERVER'] = ''
     os.environ['MONGOALCHEMY_PORT'] = ''
     os.environ['MONGOALCHEMY_DATABASE'] = ''
-    from qube.src.api import app  # import app.py
-    from qube.src.api.app import *
+    from qube.src.api.app import app
     from qube.src.models.hello import Hello
 
 
@@ -108,7 +108,8 @@ class TestHelloController(unittest.TestCase):
            return_value=(auth_response(), 200))
     def test_post_hello(self, *args, **kwargs):
         ist = io.BytesIO(json.dumps(self.model_data).encode('utf-8'))
-        rv = self.test_client.post("/hello", input_stream=ist, headers=self.headers)
+        rv = self.test_client.post("/hello",
+                                   input_stream=ist, headers=self.headers)
         result = json.loads(rv.data.decode('utf-8'))
 
         self.assertTrue(rv._status_code == 201)
@@ -130,10 +131,9 @@ class TestHelloController(unittest.TestCase):
                           updated_record.desc)
 
     @patch('mongomock.write_concern.WriteConcern.__init__', return_value=None)
-    @patch('qube.src.api.decorators.validate_with_qubeship_auth', \
+    @patch('qube.src.api.decorators.validate_with_qubeship_auth',
            return_value=(auth_response(), 200))
     def test_put_hello_item_non_found(self, *args, **kwargs):
-
 
         ist = io.BytesIO(json.dumps(self.model_data).encode('utf-8'))
         rv = self.test_client.put("/hello/{}".format(1234),
@@ -148,7 +148,8 @@ class TestHelloController(unittest.TestCase):
         id_to_get = str(self.data.mongo_id)
         rv = self.test_client.get("/hello", headers=self.headers)
         result_collection = json.loads(rv.data.decode('utf-8'))
-        self.assertTrue(rv._status_code == 200, "got status code "+ str(rv.status_code))
+        self.assertTrue(rv._status_code == 200,
+                        "got status code " + str(rv.status_code))
         self.assertTrue(len(result_collection) == 1)
         self.assertTrue(result_collection[0].get('id') == id_to_get)
 

@@ -7,12 +7,12 @@ from logging.config import fileConfig
 import os
 
 from flask_restful_swagger_2 import Api, swagger
-#from flask_swagger_ui import get_swaggerui_blueprint
-from qube.src.api.flask_swagger_ui import get_swaggerui_blueprint
 from pkg_resources import resource_filename
-
 from qube.src.api import app
-from qube.src.api.hellocontroller import ResourceItemController, ResourceController
+from qube.src.api.flask_swagger_ui import get_swaggerui_blueprint
+from qube.src.api.hellocontroller import ResourceController
+from qube.src.api.hellocontroller import ResourceItemController
+
 from qube.src.commons.log import Log as LOG
 
 logging_config = resource_filename(
@@ -38,8 +38,9 @@ api = Api(app, api_version='0.1', api_spec_url=API_URL)
 
 DEFAULT_HOST = os.getenv('DEFAULT_LISTENER_HOST', 'localhost')
 DEFAULT_PORT = int(os.environ.get('DEFAULT_LISTENER_PORT', '5000'))
-DEBUG = os.environ.get('DEBUG', 'False') \
-        in ("yes", "y", "true", "True", "t", "1")
+DEBUG = os.environ.get('DEBUG', 'False') in (
+    "yes", "y", "true", "True", "t", "1"
+)
 
 SWAGGER_URL = '/api/docs'  # URL for exposing Swagger UI (without trailing '/')
 

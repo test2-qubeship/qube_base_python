@@ -1,7 +1,8 @@
 import os
 import json
-from flask import Blueprint, send_from_directory, render_template
-from pkg_resources import resource_filename
+import os
+
+from flask import Blueprint, render_template, send_from_directory
 
 
 def get_swaggerui_blueprint(base_url, api_url, config=None):
@@ -35,7 +36,7 @@ def get_swaggerui_blueprint(base_url, api_url, config=None):
         'client_id': default_config.pop('client_id'),
         'client_secret': default_config.pop('client_secret'),
 
-        # Rest are just serialized into json string for inclusion in the .js file
+        # Rest are just serialized into json string for inclusion in .js file
         'config_json': json.dumps(default_config)
     }
 
@@ -46,7 +47,8 @@ def get_swaggerui_blueprint(base_url, api_url, config=None):
             return render_template('index.template.html', **fields)
         else:
             return send_from_directory(
-                # A bit of a hack to not pollute the default /static path with our files.
+                # A bit of a hack to not pollute the default
+                # /static path with our files.
                 os.path.join(
                     swagger_ui.root_path,
                     swagger_ui._static_folder
