@@ -1,7 +1,11 @@
 #!/bin/bash
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 set -o allexport
-source $DIR/../.env.sh
+#load .env.sh. switch dir to make 'cat ./qube.yaml' work
+pushd ..
+source .env.sh
+popd
+
 echo "checkout /tmp/test.out for info"
 echo "checkout /tmp/error.out for errors"
 

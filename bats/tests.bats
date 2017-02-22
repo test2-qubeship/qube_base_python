@@ -1,13 +1,9 @@
 #!/usr/bin/env bats
-
+#env variables are loaded from .env.sh file
 
 data='{
     "name": "test123123124"
 }'
-
-#TOKEN sould be saved in .env"
-APIHOST="localhost"
-#DEFAULT_LISTENER_PORT="8000"
 
 create_sample_data() {
   id=$(curl -H "Authorization: Bearer $TOKEN" -X POST -H "Content-Type: application/json"  -d "${data}" "$URLPATH" | jq '.id' | sed 's/\"//g')
