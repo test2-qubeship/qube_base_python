@@ -95,11 +95,10 @@ teardown() {
   echo "new record id = $new_record_id" >> /tmp/test.out
 
   #test delete
-  #echo curl -H "Authorization: Bearer $TOKEN" -X DELETE -H "Content-Type: application/json" "$URLPATH/$new_record_id" >> /tmp/test.out
+  echo curl -H "Authorization: Bearer $TOKEN" -X DELETE -H "Content-Type: application/json" "$URLPATH/$new_record_id" >> /tmp/test.out
   curl -H "Authorization: Bearer $TOKEN" -X DELETE -H "Content-Type: application/json" "$URLPATH/$new_record_id"
 
   #check by trying to get that record again.
-  #result_id=`curl -s -H "Authorization: Bearer $TOKEN"  -X GET  ${URLPATH}/$new_record_id | jq --arg "id" "$new_record_id" 'select(.id==$new_record_id) | .id' | sed 's/\"//g'`
   run curl -s -H "Authorization: Bearer $TOKEN"  -X GET -w "%{http_code}" ${URLPATH}/$new_record_id
   echo "output = $output, status_code=$status" >> /tmp/test.out
   [ "$status" -eq 0 ]
