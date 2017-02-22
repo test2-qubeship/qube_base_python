@@ -1,3 +1,7 @@
+# pylint: skip-file
+"""
+Add docstring here
+"""
 import json
 import os
 
@@ -6,6 +10,9 @@ from pkg_resources import resource_filename
 
 
 def get_swaggerui_blueprint(base_url, api_url, config=None):
+    """
+    Add docstring here
+    """
 
     swagger_ui = Blueprint('swagger_ui',
                            __name__,

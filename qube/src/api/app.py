@@ -8,7 +8,7 @@ import os
 
 from flask_restful_swagger_2 import Api, swagger
 from pkg_resources import resource_filename
-from qube.src.api import app
+from qube.src.api import app  # pylint: disable=import-self
 from qube.src.api.flask_swagger_ui import get_swaggerui_blueprint
 from qube.src.api.hellocontroller import ResourceController
 from qube.src.api.hellocontroller import ResourceItemController
@@ -21,7 +21,8 @@ fileConfig(logging_config)
 
 
 # noinspection PyUnusedLocal,PyUnusedLocal,PyUnusedLocal
-def auth(api_key, endpoint, method):
+# pylint: disable=unused-argument
+def auth(*args):
     """
     Space for your fancy authentication. Return True if access is granted,
     otherwise False
