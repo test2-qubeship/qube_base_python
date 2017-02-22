@@ -5,18 +5,17 @@ data='{
     "name": "test123123124"
 }'
 
-#TOKEN="valueDoesnotMatter"
+#TOKEN sould be saved in .env"
 APIHOST="localhost"
 DEFAULT_LISTENER_PORT="8000"
 
 create_sample_data() {
   id=$(curl -H "Authorization: Bearer $TOKEN" -X POST -H "Content-Type: application/json"  -d "${data}" "$URLPATH" | jq '.id' | sed 's/\"//g')
-  echo $id >> /tmp/test.out
+  echo "created data via post $id" >> /tmp/test.out
 }
 
 delete_sample_data() {
-  echo curl -H "Authorization: Bearer $TOKEN" -X DELETE -H "Content-Type: application/json" "$URLPATH/$id" >> /tmp/test.out
-  curl -H "Authorization: Bearer $TOKEN" -X DELETE -H "Content-Type: application/json" "$URLPATH/$id" >> /tmp/test.out
+  curl -H "Authorization: Bearer $TOKEN" -X DELETE -H "Content-Type: application/json" "$URLPATH/$id"
 }
 
 setup() {
@@ -50,6 +49,7 @@ teardown() {
   delete_sample_data
 }
 
+
 @test "get_status_code" {
   run curl -H "Authorization: Bearer $TOKEN" -s -w "%{http_code}" -X GET -o /dev/null $URLPATH
   echo "curl" -H "Authorization: Bearer $TOKEN" -s -w "%{http_code}" -X GET "$URLPATH" >> /tmp/test.out
@@ -71,4 +71,40 @@ teardown() {
   echo "get_by_id"  $id $status $output $URLPATH $result_id >> /tmp/test.out
   echo "curl" -H "Authorization: Bearer $TOKEN"  -X GET "${URLPATH}/$id" >> /tmp/test.out
   [ "$id" == "$result_id" ]
+}
+
+@test "update_record" {
+  put_data='{"name":"put_name_test123"}'
+  echo curl -H \"Authorization: Bearer $TOKEN\" -X PUT -H \"Content-Type: application/json\"  -d ${put_data} "$URLPATH/$id" >> /tmp/test.out
+  status_code=`curl -H "Authorization: Bearer $TOKEN" -X PUT -w "%{http_code}" -H "Content-Type: application/json"  -d ${put_data} "$URLPATH/$id"`
+  echo "checkout the output - $status_code , id $id" >> /tmp/test.out
+  [ $status_code -eq 204 ]
+}
+
+
+@test "create_record" {
+  post_data='{"name":"post_name_test123"}'
+  echo curl -H "Authorization: Bearer $TOKEN" -X POST -H "Content-Type: application/json" -d "${post_data}" "$URLPATH" | jq '.id' | sed 's/\"//g' >> /tmp/test.out
+
+  result_id=$(curl -H "Authorization: Bearer $TOKEN" -X POST -H "Content-Type: application/json"  -d "${post_data}" "$URLPATH" | jq '.id' | sed 's/\"//g')
+  [ "$id" != "$result_id" ]
+}
+
+
+@test "delete_record" {
+
+  #create a new record to be deleted later
+  post_data='{"name":"post_name_test123"}'
+  new_record_id=$(curl -H "Authorization: Bearer $TOKEN" -X POST -H "Content-Type: application/json"  -d "${post_data}" "$URLPATH" | jq '.id' | sed 's/\"//g')
+  echo "new record id = $new_record_id" >> /tmp/test.out
+
+  #test delete
+  #echo curl -H "Authorization: Bearer $TOKEN" -X DELETE -H "Content-Type: application/json" "$URLPATH/$new_record_id" >> /tmp/test.out
+  curl -H "Authorization: Bearer $TOKEN" -X DELETE -H "Content-Type: application/json" "$URLPATH/$new_record_id"
+
+  #check by trying to get that record again.
+  #result_id=`curl -s -H "Authorization: Bearer $TOKEN"  -X GET  ${URLPATH}/$new_record_id | jq --arg "id" "$new_record_id" 'select(.id==$new_record_id) | .id' | sed 's/\"//g'`
+  run curl -s -H "Authorization: Bearer $TOKEN"  -X GET -w "%{http_code}" ${URLPATH}/$new_record_id
+  echo "output = $output, status_code=$status" >> /tmp/test.out
+  [ "$status" -eq 0 ]
 }
