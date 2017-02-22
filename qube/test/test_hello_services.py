@@ -7,8 +7,9 @@ import time
 import unittest
 
 import mock
-import mongomock
 from mock import patch
+import mongomock
+
 
 with patch('pymongo.mongo_client.MongoClient', new=mongomock.MongoClient):
     os.environ['MONGOALCHEMY_CONNECTION_STRING'] = ''
@@ -70,8 +71,8 @@ class TestHelloService(unittest.TestCase):
     def test_put_hello(self, *args, **kwargs):
         self.hello_api_model['name'] = 'modified for put'
         id_to_find = str(self.hello_data.mongo_id)
-        result = self.helloService.update(self.hello_api_model,
-                                                id_to_find)
+        result = self.helloService.update(
+            self.hello_api_model, id_to_find)
         self.assertTrue(result['id'] == str(id_to_find))
         self.assertTrue(result['name'] == self.hello_api_model['name'])
 

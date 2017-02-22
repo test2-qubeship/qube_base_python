@@ -7,12 +7,16 @@ from flask_restful_swagger_2 import Resource, swagger
 from mongoalchemy.exceptions import ExtraValueException
 
 from qube.src.api.decorators import login_required
-from qube.src.api.swagger_models.hello import *
+from qube.src.api.swagger_models.hello import HelloModel
+from qube.src.api.swagger_models.hello import HelloModelPost
+from qube.src.api.swagger_models.hello import HelloModelPostResponse
+from qube.src.api.swagger_models.hello import HelloModelPut
+
 from qube.src.api.swagger_models.parameters import (
-    header_ex, path_ex, query_ex, body_post_ex, body_put_ex)
+    body_post_ex, body_put_ex, header_ex, path_ex, query_ex)
 from qube.src.api.swagger_models.response_messages import (
-    post_response_msgs, get_response_msgs,
-    put_response_msgs, del_response_msgs, ErrorModel)
+    del_response_msgs, ErrorModel, get_response_msgs, post_response_msgs,
+    put_response_msgs)
 from qube.src.commons.error import HelloServiceError
 from qube.src.commons.log import Log as LOG
 from qube.src.commons.utils import clean_nonserializable_attributes
@@ -40,7 +44,7 @@ class ResourceItemController(Resource):
         """gets an hello item that omar has changed
         """
         try:
-            LOG.debug("Get details by id %s ",entity_id)
+            LOG.debug("Get details by id %s ", entity_id)
             data = HelloService(authcontext['context'])\
                 .find_by_id(entity_id)
             clean_nonserializable_attributes(data)

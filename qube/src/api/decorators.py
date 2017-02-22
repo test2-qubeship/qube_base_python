@@ -4,10 +4,12 @@ This is the decorator for login enforcement
 from functools import wraps
 import json
 import os
-from flask import request, Response
+
+from flask import request
+from flask import Response
+from qube.src.commons.context import AuthContext
 import requests
 
-from qube.src.commons.context import AuthContext
 
 auth_url = os.getenv('QUBESHIP_AUTH_URL', 'https://api.qubeship.io/v1/auth')
 
