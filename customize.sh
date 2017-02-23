@@ -11,6 +11,7 @@ then
     echo "Service name is required"
     exit 0
 fi
+mv qube.yaml.template qube.yaml
 
 for file in `find . -type f  | grep -v customize.sh| grep -v .whl | grep -v .git| xargs grep -Ril qube_placeholder`; do
   echo "renaming  qube_placeholder to $module in $file"
