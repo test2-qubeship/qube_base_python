@@ -12,10 +12,10 @@ import mongomock
 
 
 with patch('pymongo.mongo_client.MongoClient', new=mongomock.MongoClient):
-    os.environ['MONGOALCHEMY_CONNECTION_STRING'] = ''
-    os.environ['MONGOALCHEMY_SERVER'] = ''
-    os.environ['MONGOALCHEMY_PORT'] = ''
-    os.environ['MONGOALCHEMY_DATABASE'] = ''
+    os.environ['QUBE_SERVICE_MONGOALCHEMY_CONNECTION_STRING'] = ''
+    os.environ['QUBE_SERVICE_MONGOALCHEMY_SERVER'] = ''
+    os.environ['QUBE_SERVICE_MONGOALCHEMY_PORT'] = ''
+    os.environ['QUBE_SERVICE_MONGOALCHEMY_DATABASE'] = ''
 
     from qube.src.models.hello import Hello
     from qube.src.services.helloservice import HelloService
