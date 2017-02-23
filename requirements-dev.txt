@@ -1,7 +1,16 @@
 colorlog>=2.7.0
-coverage>=4.2
+coverage==4.3.4
 flask>=0.11.1
 flask-restful>=0.3.5
 flask-restful-swagger-2>=0.31
+flask-swagger-ui==0.0.2
 mock
 nose
+Flask-MongoAlchemy==0.7.2
+flask_cors==3.0.2
+mongomock==3.7.0
+magicmock==0.03
+requests
+enum34
+pytest-cov==2.4.0
+pep8
