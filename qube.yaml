@@ -6,7 +6,7 @@ security:
   keys_loc: "conf/"
 build:
   image:
-    name: python:3-onbuild
+    name: python:3.5-onbuild
     onbuild:
       - scripts/build.sh
   publish_artifact: dist/
@@ -23,10 +23,4 @@ test:
   functional:
     provider: qubeship-sg
 deployment:
-  continuous_deployment: true
-  environments:
-    prod:
-      - type: qubeship_managed
-        id: "k8s1"
-        template_id: qube_external_app_v1
-        srcRepo: google
+   skip: true

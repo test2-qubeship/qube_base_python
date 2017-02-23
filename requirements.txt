@@ -2,3 +2,8 @@ colorlog>=2.7.0
 flask>=0.11.1
 flask-restful>=0.3.5
 flask-restful-swagger-2>=0.31
+Flask-MongoAlchemy==0.7.2
+requests
+flask_cors==3.0.2
+flask-swagger-ui==0.0.2
+enum34
