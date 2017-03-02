@@ -47,6 +47,14 @@ teardown() {
 }
 
 
+@test "get_version" {
+  version=`curl -s  -X GET $URLPATH/version | jq '.[] | .version' | sed 's/\"//g'`
+  echo "curl -s  -X GET $URLPATH/version | jq '.[] | .version' | sed 's/\"//g'" >> /tmp/test.out
+  echo "version" $version $URLPATH/version >> /tmp/test.out
+  [ -z "$version"]
+}
+
+
 @test "get_status_code" {
   run curl -H "Authorization: Bearer $TOKEN" -s -w "%{http_code}" -X GET -o /dev/null $URLPATH
   echo "curl" -H "Authorization: Bearer $TOKEN" -s -w "%{http_code}" -X GET "$URLPATH" >> /tmp/test.out

@@ -2,16 +2,15 @@
 """
 Add docstring here
 """
-import io
 import json
 import os
 import unittest
+
 from mock import patch
 import mongomock
-from qube.src.commons import qube_config
-from pkg_resources import resource_filename
 
-from src.commons.qube_config import QubeConfig
+from pkg_resources import resource_filename
+from qube.src.commons.qube_config import QubeConfig
 
 HELLO_VERSION = "/v1/hello/version"
 with patch('pymongo.mongo_client.MongoClient', new=mongomock.MongoClient):
@@ -34,25 +33,27 @@ class TestHelloVersionController(unittest.TestCase):
         print("teardown")
 
     def test_hello_default_version(self, *args, **kwargs):
-        QubeConfig.QUBE_VERSION_FILE = resource_filename(
-            'qube.src.resources', 'qube_version_dontexist.txt')
+        QubeConfig.get_config().QUBE_VERSION_FILE = resource_filename(
+            'qube.src.resources', 'qube_sample_version_dontexist.txt')
         QubeConfig.get_config().version_str = None
         rv = self.test_client.get(HELLO_VERSION,
                                   headers=[('Content-Type',
                                             'application/json')])
         result = json.loads(rv.data.decode('utf-8'))
         self.assertTrue(rv._status_code == 200)
-        self.assertEquals(result['version'], qube_config.DEFAULT_VERSION)
+        self.assertEquals(result['version'],
+                          QubeConfig.get_config().default_ver)
 
     def test_hello_git_version(self, *args, **kwargs):
-        QubeConfig.QUBE_VERSION_FILE = resource_filename(
+        QubeConfig.get_config().QUBE_VERSION_FILE = resource_filename(
             'qube.src.resources', 'qube_sample_version.txt')
         QubeConfig.get_config().version_str = None
-        with open(QubeConfig.QUBE_VERSION_FILE, 'r') as f:
+        with open(QubeConfig.get_config().QUBE_VERSION_FILE, 'r') as f:
             expected_version_str_file = f.read()
 
         expected_version_string = "{} ({})". \
-            format(qube_config.DEFAULT_VERSION, expected_version_str_file.strip())
+            format(QubeConfig.get_config().default_ver,
+                   expected_version_str_file.strip())
 
         rv = self.test_client.get(HELLO_VERSION,
                                   headers=[('Content-Type',

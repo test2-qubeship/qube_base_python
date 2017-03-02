@@ -12,9 +12,8 @@ from qube.src.api import app  # pylint: disable=import-self
 from qube.src.api.flask_swagger_ui import get_swaggerui_blueprint
 from qube.src.api.hellocontroller import ResourceController
 from qube.src.api.hellocontroller import ResourceItemController
-
-from qube.src.commons.log import Log as LOG
 from qube.src.api.versioncontroller import ResourceItemVersionController
+from qube.src.commons.log import Log as LOG
 
 logging_config = resource_filename(
     'qube.src.resources', 'logging_config.ini')
