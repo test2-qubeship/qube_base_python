@@ -14,7 +14,7 @@ from qube.src.api.hellocontroller import ResourceController
 from qube.src.api.hellocontroller import ResourceItemController
 
 from qube.src.commons.log import Log as LOG
-from src.api.versioncontroller import ResourceItemVersionController
+from qube.src.api.versioncontroller import ResourceItemVersionController
 
 logging_config = resource_filename(
     'qube.src.resources', 'logging_config.ini')
