@@ -11,7 +11,7 @@ from qube.src.commons.context import AuthContext
 import requests
 
 
-auth_url = os.getenv('QUBESHIP_AUTH_URL', 'https://api.qubeship.io/v1/auth')
+auth_url = os.getenv('AUTH_API_URL', 'https://api.qubeship.io/v1/auth')
 
 
 def validate_with_qubeship_auth(auth_token):

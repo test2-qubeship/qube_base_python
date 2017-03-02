@@ -55,11 +55,11 @@ environment_variables:
     value: https://api.qubeship.io/v1/auth
   - name: VAULT_ADDR
     value: https://vault.qubeship.io
-  - name: MONGOALCHEMY_SERVER
+  - name: QUBE_SERVICE_MONGOALCHEMY_SERVER
     value: $(MONGO_SERVICE_HOST)
-  - name: MONGOALCHEMY_PORT
+  - name: QUBE_SERVICE_MONGOALCHEMY_PORT
     value: $(MONGO_SERVICE_PORT)
-  - name: MONGOALCHEMY_DATABASE
+  - name: QUBE_SERVICE_MONGOALCHEMY_DATABASE
     value: toolchain
   - name: CI_ADDR
     value: https://jenkins.qubeship.io
