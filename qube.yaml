@@ -2,6 +2,10 @@
 name: qube_placeholder
 language: qube_language
 pipeline: build_bake_test_deployment:v0.1
+notification:
+  type: slack
+  domain: qubeship
+  channel: qubeship
 security:
   keys_loc: "conf/"
 build:
