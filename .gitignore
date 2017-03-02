@@ -43,6 +43,7 @@ htmlcov/
 nosetests.xml
 .idea/
 coverage.xml
+qube_version.txt
 cov*.xml
 .noseids
 xunit.xml

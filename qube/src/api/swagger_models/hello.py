@@ -1,6 +1,15 @@
 from flask_restful_swagger_2 import Schema
 
 
+class VersionModel(Schema):
+    type = 'object'
+    properties = {
+        'version': {
+            'type': 'string',
+        }
+    }
+
+
 class HelloModel(Schema):
     type = 'object'
     properties = {

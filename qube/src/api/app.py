@@ -14,6 +14,7 @@ from qube.src.api.hellocontroller import ResourceController
 from qube.src.api.hellocontroller import ResourceItemController
 
 from qube.src.commons.log import Log as LOG
+from src.api.versioncontroller import ResourceItemVersionController
 
 logging_config = resource_filename(
     'qube.src.resources', 'logging_config.ini')
@@ -64,7 +65,7 @@ docs.append(api.get_swagger_doc())
 (docs, API_URL+'.json', title='Example', api_version='0.1'))
 """
 app.register_blueprint(swaggerui_blueprint, url_prefix=SWAGGER_URL)
-
+api.add_resource(ResourceItemVersionController, '/v1/hello/version')
 api.add_resource(ResourceController, '/v1/hello')
 api.add_resource(ResourceItemController, '/v1/hello/<string:entity_id>')
 
