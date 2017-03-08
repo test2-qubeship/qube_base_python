@@ -104,15 +104,6 @@ response_msgs = {
     }
 }
 
-class HelloModelPostResponse(Schema):
-    type = 'object'
-    properties = {
-        'id': {
-            'type': 'string'
-        }
-    }
-
-
 
 class ErrorModel(Schema):
     type = 'object'
