@@ -30,7 +30,7 @@ get_params = [header_ex]
 post_params = [header_ex, body_post_ex]
 
 
-class ResourceItemController(Resource):
+class HelloItemController(Resource):
     @swagger.doc(
         {
             'tags': ['Hello'],
@@ -119,7 +119,7 @@ class ResourceItemController(Resource):
                                  'error_message': ex.args[0]}), 500
 
 
-class ResourceController(Resource):
+class HelloController(Resource):
     @swagger.doc(
         {
             'tags': ['Hello'],
