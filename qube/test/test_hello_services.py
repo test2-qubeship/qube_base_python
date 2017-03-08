@@ -9,6 +9,7 @@ import unittest
 import mock
 from mock import patch
 import mongomock
+from qube.src.commons.error import ErrorCodes, HelloServiceError
 
 
 with patch('pymongo.mongo_client.MongoClient', new=mongomock.MongoClient):
@@ -27,16 +28,22 @@ class TestHelloService(unittest.TestCase):
     @mock.patch('pymongo.mongo_client.MongoClient', new=mongomock.MongoClient)
     def setUp(self):
         context = AuthContext("23432523452345", "987656789765670",
-                                                "1009009009988")
+                                                "1009009009988", False)
         self.helloService = HelloService(context)
-        self.hello_data = self.setupDatabaseRecords()
         self.hello_api_model = self.createTestModelData()
+        self.hello_data = self.setupDatabaseRecords(self.hello_api_model)
+        self.hello_someoneelses = \
+            self.setupDatabaseRecords(self.hello_api_model)
+        self.hello_someoneelses.tenantId = "123432523452345"
         self.hello_api_model_put_description \
             = self.createTestModelDataDescription()
+        self.test_data_collection = [self.hello_data]
 
     def tearDown(self):
         with patch('mongomock.write_concern.WriteConcern.__init__',
                    return_value=None):
+            for item in self.test_data_collection:
+                item.remove()
             self.hello_data.remove()
 
     def createTestModelData(self):
@@ -46,10 +53,13 @@ class TestHelloService(unittest.TestCase):
         return {'desc': 'test123123124'}
 
     @mock.patch('pymongo.mongo_client.MongoClient', new=mongomock.MongoClient)
-    def setupDatabaseRecords(self):
+    def setupDatabaseRecords(self, hello_api_model):
         with patch('mongomock.write_concern.WriteConcern.__init__',
                    return_value=None):
             hello_data = Hello(name='test_record')
+            for key in hello_api_model:
+                hello_data.__setattr__(key, hello_api_model[key])
+
             hello_data.desc = 'my short description'
             hello_data.tenantId = "23432523452345"
             hello_data.orgId = "987656789765670"
@@ -93,13 +103,6 @@ class TestHelloService(unittest.TestCase):
         self.assertTrue(result['id'] == str(id_to_find))
 
     @patch('mongomock.write_concern.WriteConcern.__init__', return_value=None)
-    def test_delete_hello_item(self, *args, **kwargs):
-        id_to_delete = str(self.hello_data.mongo_id)
-        self.helloService.delete(id_to_delete)
-        with self.assertRaises(HelloServiceError):
-            self.helloService.find_by_id(id_to_delete)
-
-    @patch('mongomock.write_concern.WriteConcern.__init__', return_value=None)
     def test_get_hello_item_invalid(self, *args, **kwargs):
         id_to_find = '123notexist'
         with self.assertRaises(HelloServiceError):
@@ -108,6 +111,31 @@ class TestHelloService(unittest.TestCase):
     @patch('mongomock.write_concern.WriteConcern.__init__', return_value=None)
     def test_get_hello_list(self, *args, **kwargs):
         result_collection = self.helloService.get_all()
-        self.assertTrue(len(result_collection) == 1)
+        self.assertTrue(len(result_collection) == 1,
+                        "Expected result 1 but got {} ".
+                        format(str(len(result_collection))))
         self.assertTrue(result_collection[0]['id'] ==
                         str(self.hello_data.mongo_id))
+
+    @patch('mongomock.write_concern.WriteConcern.__init__', return_value=None)
+    def test_delete_toolchain_not_system_user(self, *args, **kwargs):
+        id_to_delete = str(self.hello_data.mongo_id)
+        with self.assertRaises(HelloServiceError) as ex:
+            self.helloService.delete(id_to_delete)
+        self.assertEquals(ex.exception.errors, ErrorCodes.NOT_ALLOWED)
+
+    @patch('mongomock.write_concern.WriteConcern.__init__', return_value=None)
+    def test_delete_toolchain_by_system_user(self, *args, **kwargs):
+        id_to_delete = str(self.hello_data.mongo_id)
+        self.helloService.auth_context.is_system_user = True
+        self.helloService.delete(id_to_delete)
+        with self.assertRaises(HelloServiceError) as ex:
+            self.helloService.find_by_id(id_to_delete)
+        self.assertEquals(ex.exception.errors, ErrorCodes.NOT_FOUND)
+        self.helloService.auth_context.is_system_user = False
+
+    @patch('mongomock.write_concern.WriteConcern.__init__', return_value=None)
+    def test_delete_toolchain_item_someoneelse(self, *args, **kwargs):
+        id_to_delete = str(self.hello_someoneelses.mongo_id)
+        with self.assertRaises(HelloServiceError):
+            self.helloService.delete(id_to_delete)

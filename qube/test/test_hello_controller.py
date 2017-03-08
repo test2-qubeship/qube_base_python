@@ -33,9 +33,23 @@ def auth_response():
             'orgs': [{
                 'id': '987656789765670'
             }]
-        }
+        },
+        'is_system_user': False
     }
+    return json.dumps(userinfo)
 
+def system_user_auth_response():
+    userinfo = {
+        'id': '1009009009988',
+        'type': 'org',
+        'tenant': {
+            'id': '23432523452345',
+            'orgs': [{
+                'id': '987656789765670'
+            }]
+        },
+        'is_system_user': True
+    }
     return json.dumps(userinfo)
 
 
@@ -48,7 +62,8 @@ def invalid_auth_response():
             'orgs': [{
                 'id': '987656789765670'
             }]
-        }
+        },
+        'is_system_user': False
     }
     return json.dumps(userinfo)
 
@@ -176,7 +191,7 @@ class TestHelloController(unittest.TestCase):
 
     @patch('mongomock.write_concern.WriteConcern.__init__', return_value=None)
     @patch('qube.src.api.decorators.validate_with_qubeship_auth',
-           return_value=(auth_response(), 200))
+           return_value=(system_user_auth_response(), 200))
     def test_delete_hello_item(self, *args, **kwargs):
         id_to_delete = str(self.data.mongo_id)
         rv = self.test_client.delete(HELLO_WITH_ID.format(id_to_delete),
@@ -187,8 +202,9 @@ class TestHelloController(unittest.TestCase):
 
     @patch('mongomock.write_concern.WriteConcern.__init__', return_value=None)
     @patch('qube.src.api.decorators.validate_with_qubeship_auth',
-           return_value=(auth_response(), 200))
+           return_value=(system_user_auth_response(), 200))
     def test_delete_hello_item_notfound(self, *args, **kwargs):
+
         rv = self.test_client.delete(HELLO_WITH_ID.format(123456),
                                      headers=self.headers)
         self.assertTrue(rv._status_code == 404)
