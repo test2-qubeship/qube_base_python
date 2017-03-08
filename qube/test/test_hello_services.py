@@ -9,7 +9,6 @@ import unittest
 import mock
 from mock import patch
 import mongomock
-from qube.src.commons.error import ErrorCodes, HelloServiceError
 
 
 with patch('pymongo.mongo_client.MongoClient', new=mongomock.MongoClient):
@@ -21,7 +20,7 @@ with patch('pymongo.mongo_client.MongoClient', new=mongomock.MongoClient):
     from qube.src.models.hello import Hello
     from qube.src.services.helloservice import HelloService
     from qube.src.commons.context import AuthContext
-    from qube.src.commons.error import HelloServiceError
+    from qube.src.commons.error import ErrorCodes, HelloServiceError
 
 
 class TestHelloService(unittest.TestCase):

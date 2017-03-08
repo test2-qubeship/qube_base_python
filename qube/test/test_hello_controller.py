@@ -11,6 +11,7 @@ import unittest
 from mock import patch
 import mongomock
 
+from qube.src.commons.utils import clean_nonserializable_attributes
 
 # noinspection PyUnresolvedReferences
 HELLO_WITH_ID = "/v1/hello/{}"
@@ -37,6 +38,7 @@ def auth_response():
         'is_system_user': False
     }
     return json.dumps(userinfo)
+
 
 def system_user_auth_response():
     userinfo = {
@@ -142,6 +144,7 @@ class TestHelloController(unittest.TestCase):
         rv = self.test_client.put(
             HELLO_WITH_ID.format(entity_id),
             input_stream=ist, headers=self.headers)
+
         self.assertTrue(rv._status_code == 204)
         updated_record = Hello.query.get(entity_id)
         self.assertEquals(self.model_data['desc'],
@@ -169,6 +172,12 @@ class TestHelloController(unittest.TestCase):
                         "got status code " + str(rv.status_code))
         self.assertTrue(len(result_collection) == 1)
         self.assertTrue(result_collection[0].get('id') == id_to_get)
+        get_record_dic = self.data.wrap()
+        clean_nonserializable_attributes(get_record_dic)
+        for key in get_record_dic:
+            self.assertEqual(get_record_dic[key], result_collection[0].
+                             get(key), "assertion failed for key {} ".
+                             format(key))
 
     @patch('mongomock.write_concern.WriteConcern.__init__', return_value=None)
     @patch('qube.src.api.decorators.validate_with_qubeship_auth',
@@ -180,6 +189,11 @@ class TestHelloController(unittest.TestCase):
         result = json.loads(rv.data.decode('utf-8'))
         self.assertTrue(rv._status_code == 200)
         self.assertTrue(id_to_get == result['id'])
+        get_record_dic = self.data.wrap()
+        clean_nonserializable_attributes(get_record_dic)
+        for key in get_record_dic:
+            self.assertEqual(get_record_dic[key], result.get(key),
+                             "assertion failed for key {} ".format(key))
 
     @patch('mongomock.write_concern.WriteConcern.__init__', return_value=None)
     @patch('qube.src.api.decorators.validate_with_qubeship_auth',
