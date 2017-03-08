@@ -50,10 +50,11 @@ class ResourceItemController(Resource):
             clean_nonserializable_attributes(data)
         except HelloServiceError as e:
             LOG.error(e)
-            return ErrorModel(**{'message': e.args[0]}), e.errors
+            return ErrorModel(**{'error_code': str(e.errors.value),
+                                 'error_message': e.args[0]}), e.errors
         except ValueError as e:
             LOG.error(e)
-            return ErrorModel(**{'message': e.args[0]}), 400
+            return ErrorModel(**{'error_code': '400', 'error_message': e.args[0]}), 400
         return HelloModel(**data), 200
 
     @swagger.doc(
@@ -76,13 +77,14 @@ class ResourceItemController(Resource):
             return EMPTY, 204
         except HelloServiceError as e:
             LOG.error(e)
-            return ErrorModel(**{'message': e.args[0]}), e.errors
+            return ErrorModel(**{'error_code': str(e.errors.value),
+                                 'error_message': e.args[0]}), e.errors
         except ValueError as e:
             LOG.error(e)
-            return ErrorModel(**{'message': e.args[0]}), 400
+            return ErrorModel(**{'error_code': '400', 'error_message': e.args[0]}), 400
         except Exception as ex:
             LOG.error(ex)
-            return ErrorModel(**{'message': ex.args[0]}), 500
+            return ErrorModel(**{'error_code': '400', 'error_message': ex.args[0]}), 500
 
     @swagger.doc(
         {
@@ -102,13 +104,14 @@ class ResourceItemController(Resource):
             return EMPTY, 204
         except HelloServiceError as e:
             LOG.error(e)
-            return ErrorModel(**{'message': e.args[0]}), e.errors
+            return ErrorModel(**{'error_code': str(e.errors.value),
+                                 'error_message': e.args[0]}), e.errors
         except ValueError as e:
             LOG.error(e)
-            return ErrorModel(**{'message': e.args[0]}), 400
+            return ErrorModel(**{'error_code': '400', 'error_message': e.args[0]}), 400
         except Exception as ex:
             LOG.error(ex)
-            return ErrorModel(**{'message': ex.args[0]}), 500
+            return ErrorModel(**{'error_code': '400', 'error_message': ex.args[0]}), 500
 
 
 class ResourceController(Resource):
@@ -156,11 +159,12 @@ class ResourceController(Resource):
                     {'Location': request.path + '/' + str(response['id'])})
         except ValueError as e:
             LOG.error(e)
-            return ErrorModel(**{'message': e.args[0]}), 400
+            return ErrorModel(**{'error_code': str(e.errors.value),
+                                 'error_message': e.args[0]}), 400
         except ExtraValueException as e:
             LOG.error(e)
-            return ErrorModel(**{'message': "{} is not valid input".
+            return ErrorModel(**{'error_code': '400', 'error_message': "{} is not valid input".
                               format(e.args[0])}), 400
         except Exception as ex:
             LOG.error(ex)
-            return ErrorModel(**{'message': ex.args[0]}), 500
+            return ErrorModel(**{'error_code': '400', 'error_message': ex.args[0]}), 500
