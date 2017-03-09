@@ -73,8 +73,11 @@ def login_required(f):
         is_system_user = userinfo['is_system_user'] \
             if 'is_system_user' in userinfo else False
         auth_context = AuthContext(userinfo['tenant']['id'],
+                                   userinfo['tenant']['name'],
                                    userinfo['tenant']['orgs'][0]['id'],
-                                   userinfo['id'], is_system_user)
+                                   userinfo['tenant']['orgs'][0]['name'],
+                                   userinfo['id'], 'auth_not_implemented',
+                                   is_system_user)
         kwargs['authcontext'] = {
             'context': auth_context
         }

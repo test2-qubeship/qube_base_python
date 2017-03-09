@@ -26,8 +26,9 @@ with patch('pymongo.mongo_client.MongoClient', new=mongomock.MongoClient):
 class TestHelloService(unittest.TestCase):
     @mock.patch('pymongo.mongo_client.MongoClient', new=mongomock.MongoClient)
     def setUp(self):
-        context = AuthContext("23432523452345", "987656789765670",
-                                                "1009009009988", False)
+        context = AuthContext("23432523452345", "tenantname",
+                              "987656789765670", "orgname", "1009009009988",
+                              "username", False)
         self.helloService = HelloService(context)
         self.hello_api_model = self.createTestModelData()
         self.hello_data = self.setupDatabaseRecords(self.hello_api_model)

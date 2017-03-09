@@ -31,8 +31,10 @@ def auth_response():
         'type': 'org',
         'tenant': {
             'id': '23432523452345',
+            'name': 'tenantname',
             'orgs': [{
-                'id': '987656789765670'
+                'id': '987656789765670',
+                'name': 'orgname'
             }]
         },
         'is_system_user': False
@@ -46,8 +48,11 @@ def system_user_auth_response():
         'type': 'org',
         'tenant': {
             'id': '23432523452345',
+            'name': 'tenantname',
             'orgs': [{
-                'id': '987656789765670'
+                'id': '987656789765670',
+                'name': 'orgname'
+
             }]
         },
         'is_system_user': True
@@ -61,8 +66,10 @@ def invalid_auth_response():
         'type': 'master',
         'tenant': {
             'id': '23432523452345',
+            'name': 'tenantname',
             'orgs': [{
-                'id': '987656789765670'
+                'id': '987656789765670',
+                'name': 'orgname'
             }]
         },
         'is_system_user': False
