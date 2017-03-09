@@ -146,7 +146,7 @@ class TestHelloController(unittest.TestCase):
            return_value=(auth_response(), 200))
     def test_put_hello_item(self, *args, **kwargs):
         entity_id = str(self.data.mongo_id)
-        self.model_data['desc'] = 'updated model desc'
+        self.model_data['description'] = 'updated model desc'
         ist = io.BytesIO(json.dumps(self.model_data).encode('utf-8'))
         rv = self.test_client.put(
             HELLO_WITH_ID.format(entity_id),
@@ -154,8 +154,8 @@ class TestHelloController(unittest.TestCase):
 
         self.assertTrue(rv._status_code == 204)
         updated_record = Hello.query.get(entity_id)
-        self.assertEquals(self.model_data['desc'],
-                          updated_record.desc)
+        self.assertEquals(self.model_data['description'],
+                          updated_record.description)
 
     @patch('mongomock.write_concern.WriteConcern.__init__', return_value=None)
     @patch('qube.src.api.decorators.validate_with_qubeship_auth',
