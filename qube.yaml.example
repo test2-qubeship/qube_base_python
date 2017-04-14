@@ -1,34 +1,32 @@
----
-name: qube_placeholder
-language: qube_language
-pipeline: build_bake_test_deployment:v0.1
-notification:
-  type: slack
-  domain: qubeship
-  channel: qubeship
-security:
-  keys_loc: "conf/"
+id: 70ece03f-5e25-4eb0-b35b-17f18c4b7bc4
+version: v2
+name: spring-new-everything
+apptype: api
+language: python
+containerName: spring-new-everything
+toolchain:
+  id: 58e5d97bacac5a001de2b937
+  name: Qubeship-Python-Toolchain
+opinion:
+  id: 58e3fb3ce2a801000e8cb440
+  name: Qubeship Out of the Box Opinion
+endpoint:
+  id: 58e1cbf02a0603000b3e58a4
+  name: Qubeship Sandbox Cluster
+  type: target
+variables:
+  - name: APP_VERSION
+    value: v0.1
 build:
-  image:
-    name: python:3.5-onbuild
-    onbuild:
-      - scripts/build.sh
-  publish_artifacts:
-    - dist/
-    - nosetests.xml
-    - cov_html/
-    - flake8-output.txt
-  lint: true
+  compile:
+    publish:
+     - dist/
 bake:
-  strategy: docker
-  script: Dockerfile
-  repositories:
-    - name: google
-      prefix: gcr.io/qubeship
-      type: gcr
+  skip: false
 test:
   skip: true
-  functional:
-    provider: qubeship-sg
-deployment:
-   skip: true
+deploy_to_qa:
+  skip: true
+deploy_to_prod:
+  skip: false
+
