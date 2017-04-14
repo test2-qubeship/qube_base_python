@@ -1,0 +1,32 @@
+id: 70ece03f-5e25-4eb0-b35b-17f18c4b7bc4
+version: v2
+name: spring-new-everything
+apptype: api
+language: python
+containerName: spring-new-everything
+toolchain:
+  id: 58e5d97bacac5a001de2b937
+  name: Qubeship-Python-Toolchain
+opinion:
+  id: 58e3fb3ce2a801000e8cb440
+  name: Qubeship Out of the Box Opinion
+endpoint:
+  id: 58e1cbf02a0603000b3e58a4
+  name: Qubeship Sandbox Cluster
+  type: target
+variables:
+  - name: APP_VERSION
+    value: v0.1
+build:
+  compile:
+    publish:
+     - dist/
+bake:
+  skip: false
+test:
+  skip: true
+deploy_to_qa:
+  skip: true
+deploy_to_prod:
+  skip: false
+
